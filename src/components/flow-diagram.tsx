@@ -41,7 +41,7 @@ const KIND: Record<StepKind, { tag: string; box: string; tagClass: string; legen
     tag: "Effect",
     box: "border-ink/70 bg-surface",
     tagClass: "text-ink",
-    legend: "Leaves the system",
+    legend: "An irreversible or outbound effect",
   },
 };
 
@@ -50,7 +50,7 @@ const CONNECTOR = {
   sequence:
     "before:text-[13px] sm:before:left-[-15px] max-sm:before:content-['↓'] sm:before:content-['→']",
   alternatives:
-    "before:font-mono before:text-[9.5px] before:uppercase before:tracking-[0.08em] sm:before:left-[-17px] before:content-['or']",
+    "before:font-mono before:text-[10px] before:uppercase before:tracking-[0.08em] sm:before:left-[-17px] before:content-['or']",
 };
 
 function Step({
@@ -70,7 +70,7 @@ function Step({
       <div className={`flex h-full flex-col rounded-[var(--radius-sm)] border px-3 py-2.5 ${kind.box}`}>
         <div className="flex items-center justify-between gap-2">
           <span className="num font-mono text-[10px] text-faint">{number}</span>
-          <span className={`font-mono text-[9.5px] uppercase tracking-[0.1em] ${kind.tagClass}`}>
+          <span className={`font-mono text-[10px] uppercase tracking-[0.1em] ${kind.tagClass}`}>
             {kind.tag}
           </span>
         </div>
@@ -146,7 +146,7 @@ export function FlowDiagram({ flow }: { flow: Flow }) {
         <ul className="mt-3 flex flex-wrap gap-x-4 gap-y-1.5" aria-label="Legend">
           {kinds.map((kind) => (
             <li key={kind} className="flex items-center gap-1.5 text-[11.5px] text-muted">
-              <span className={`font-mono text-[9.5px] uppercase tracking-[0.1em] ${KIND[kind].tagClass}`}>
+              <span className={`font-mono text-[10px] uppercase tracking-[0.1em] ${KIND[kind].tagClass}`}>
                 {KIND[kind].tag}
               </span>
               <span>{KIND[kind].legend}</span>

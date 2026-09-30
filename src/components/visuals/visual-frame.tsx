@@ -22,7 +22,6 @@ export function VisualFrame({
     >
       <div className="flex items-center justify-between gap-4 border-b border-line px-4 py-2.5">
         <p className="label text-ink-2">{title}</p>
-        <span aria-hidden="true" className="size-1.5 rounded-full bg-id" />
       </div>
       <div className="min-w-0 flex-1 px-3 py-4 sm:px-4">{children}</div>
       <figcaption className="border-t border-line px-4 py-3">

@@ -18,7 +18,7 @@
   --ink: #141519;
   --ink-2: #363941;
   --muted: #5c606a;
-  --faint: #8b8f98;
+  --faint: #676b74;
 
   --focus: #2155d6;
   --pass: #17703a;
@@ -30,12 +30,12 @@
 
   /* One hue per project, used only inside that project's context. */
   --ledger: #0f766e;
-  --market: #b45309;
-  --callsite: #0369a1;
-  --authz: #c2410c;
-  --resolver: #4f46e5;
+  --market: #5c606a;
+  --callsite: #5c606a;
+  --authz: #b83c0b;
+  --resolver: #5c606a;
   --bordereaux: #1d4ed8;
-  --parts: #8a6a00;
+  --parts: #7d6000;
 
   --radius: 10px;
   --radius-sm: 6px;
@@ -56,7 +56,7 @@
   --ink: #ececee;
   --ink-2: #c6c8ce;
   --muted: #9a9ea8;
-  --faint: #6c7079;
+  --faint: #7c808a;
 
   --focus: #86a8ff;
   --pass: #4ade80;
@@ -67,10 +67,10 @@
   --warn-bg: rgb(250 204 21 / 0.1);
 
   --ledger: #2dd4bf;
-  --market: #fbbf24;
-  --callsite: #38bdf8;
+  --market: #9a9ea8;
+  --callsite: #9a9ea8;
   --authz: #fb923c;
-  --resolver: #a5b4fc;
+  --resolver: #9a9ea8;
   --bordereaux: #60a5fa;
   --parts: #e3c16f;
 
@@ -92,7 +92,7 @@
     --ink: #ececee;
     --ink-2: #c6c8ce;
     --muted: #9a9ea8;
-    --faint: #6c7079;
+    --faint: #7c808a;
 
     --focus: #86a8ff;
     --pass: #4ade80;
@@ -103,10 +103,10 @@
     --warn-bg: rgb(250 204 21 / 0.1);
 
     --ledger: #2dd4bf;
-    --market: #fbbf24;
-    --callsite: #38bdf8;
+    --market: #9a9ea8;
+    --callsite: #9a9ea8;
     --authz: #fb923c;
-    --resolver: #a5b4fc;
+    --resolver: #9a9ea8;
     --bordereaux: #60a5fa;
     --parts: #e3c16f;
 

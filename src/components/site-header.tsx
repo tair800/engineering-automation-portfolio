@@ -31,15 +31,21 @@ export function SiteHeader() {
               ))}
             </ul>
           </nav>
-          <a
-            href={profile.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden items-center gap-1 rounded-md px-2.5 py-1.5 text-[13px] text-muted transition-colors hover:text-ink md:inline-flex"
-          >
-            GitHub <ArrowUpRight className="size-3.5" />
-            <span className="sr-only">(opens in a new tab)</span>
-          </a>
+          {[
+            { href: profile.linkedinUrl, label: "LinkedIn" },
+            { href: profile.githubUrl, label: "GitHub" },
+          ].map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden items-center gap-1 rounded-md px-2 py-1.5 text-[13px] text-muted transition-colors hover:text-ink lg:inline-flex"
+            >
+              {link.label} <ArrowUpRight className="size-3.5" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          ))}
           <ThemeToggle />
           <MobileNav />
         </div>

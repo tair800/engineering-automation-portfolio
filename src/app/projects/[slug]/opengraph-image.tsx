@@ -43,10 +43,10 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           <div style={{ fontSize: 68, fontWeight: 600, letterSpacing: -2.5, marginTop: 36, lineHeight: 1.05 }}>
             {project.name}
           </div>
-          <div style={{ fontSize: 28, lineHeight: 1.4, color: ogColors.ink2, marginTop: 24, maxWidth: 1000 }}>
+          <div style={{ fontFamily: "Geist Mono", fontSize: 24, lineHeight: 1.5, color: ogColors.ink2, marginTop: 26, maxWidth: 1040 }}>
             {project.tagline}
           </div>
-          <div style={{ display: "flex", alignItems: "center", marginTop: "auto", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginTop: "auto", gap: 18 }}>
             <div
               style={{
                 display: "flex",
@@ -64,7 +64,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
               <div style={{ width: 9, height: 9, borderRadius: 9, background: negative ? ogColors.fail : ogColors.pass, marginRight: 12 }} />
               {`${project.status.label} · ${project.status.deployment}`}
             </div>
-            <div style={{ fontSize: 20, color: ogColors.muted }}>
+            <div style={{ fontFamily: "Geist Mono", fontSize: 18, color: ogColors.muted }}>
               {`${profile.name} · ${profile.role}`}
             </div>
           </div>

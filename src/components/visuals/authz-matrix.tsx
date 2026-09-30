@@ -9,7 +9,7 @@ function Outcome({ value, attack }: { value: string; attack: boolean }) {
   return (
     <span className="flex flex-col gap-0.5">
       <span
-        className={`font-mono text-[12px] leading-4 ${
+        className={`whitespace-nowrap font-mono text-[12px] leading-4 ${
           breach ? "font-semibold text-fail" : allowed ? "text-ink" : "text-ink-2"
         }`}
       >
@@ -17,7 +17,9 @@ function Outcome({ value, attack }: { value: string; attack: boolean }) {
         {verdict}
       </span>
       {reason.length ? (
-        <span className="font-mono text-[10.5px] leading-4 text-id">{reason.join(" · ")}</span>
+        <span className="mt-0.5 self-start rounded-[4px] border border-id/35 px-1 font-mono text-[10.5px] leading-4 text-id [overflow-wrap:anywhere] sm:whitespace-nowrap sm:[overflow-wrap:normal]">
+          {reason.join(" · ")}
+        </span>
       ) : null}
     </span>
   );
@@ -37,7 +39,7 @@ function Effects({ row }: { row: AuthzRow }) {
 function Tag({ attack }: { attack: boolean }) {
   return (
     <span
-      className={`font-mono text-[9.5px] uppercase tracking-[0.1em] ${
+      className={`font-mono text-[10px] uppercase tracking-[0.1em] ${
         attack ? "text-id" : "text-pass"
       }`}
     >
@@ -51,7 +53,12 @@ function MobileRows({ visual }: { visual: AuthzVisual }) {
   return (
     <ol className="flex flex-col sm:hidden">
       {visual.rows.map((row) => (
-        <li key={row.scenario} className="border-t border-line py-3 first:border-t-0 first:pt-0">
+        <li
+          key={row.scenario}
+          className={`border-t border-line py-3 pl-2.5 first:border-t-0 first:pt-0 ${
+            row.attack ? "border-l-2 border-l-id" : "border-l-2 border-l-transparent"
+          }`}
+        >
           <div className="flex items-start justify-between gap-3">
             <p className="text-[12.5px] leading-[18px] text-ink-2">{row.scenario}</p>
             <Effects row={row} />
@@ -95,7 +102,7 @@ export function AuthzMatrix({ visual }: { visual: AuthzVisual }) {
           </caption>
           <thead>
             <tr className="border-b border-line">
-              <th scope="col" className="pb-2 pr-3">
+              <th scope="col" className="pb-2 pl-3 pr-3">
                 <span className="label">Scenario</span>
               </th>
               <th scope="col" className="pb-2 pr-3">
@@ -112,7 +119,12 @@ export function AuthzMatrix({ visual }: { visual: AuthzVisual }) {
           <tbody>
             {visual.rows.map((row) => (
               <tr key={row.scenario} className="border-b border-line last:border-0">
-                <th scope="row" className="py-2.5 pr-3 align-top font-normal">
+                <th
+                  scope="row"
+                  className={`border-l-2 py-2.5 pl-2.5 pr-3 align-top font-normal ${
+                    row.attack ? "border-id" : "border-transparent"
+                  }`}
+                >
                   <span className="mb-1 block text-[12.5px] leading-[18px] text-ink-2">{row.scenario}</span>
                   <Tag attack={row.attack} />
                 </th>

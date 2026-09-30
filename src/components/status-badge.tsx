@@ -6,13 +6,13 @@ export function StatusBadge({ status, compact = false }: { status: ProjectStatus
   return (
     <span className="inline-flex flex-wrap items-center gap-1.5">
       <span
-        className={`inline-flex items-center gap-1.5 rounded-[var(--radius-sm)] border px-2 py-0.5 font-mono text-[10.5px] uppercase leading-4 tracking-[0.06em] ${
+        className={`inline-flex max-w-full items-start gap-1.5 text-balance rounded-[var(--radius-sm)] border px-2 py-0.5 font-mono text-[10.5px] uppercase leading-4 tracking-[0.06em] ${
           negative ? "border-fail/40 bg-fail-bg text-fail" : "border-line bg-surface text-ink-2"
         }`}
       >
         <span
           aria-hidden="true"
-          className={`size-1.5 shrink-0 rounded-full ${negative ? "bg-fail" : "bg-pass"}`}
+          className={`mt-[5px] size-1.5 shrink-0 rounded-full ${negative ? "bg-fail" : "bg-pass"}`}
         />
         {status.label}
       </span>

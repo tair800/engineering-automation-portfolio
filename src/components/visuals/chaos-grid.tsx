@@ -74,6 +74,11 @@ function MobileRows({ visual }: { visual: ChaosVisual }) {
 export function ChaosGrid({ visual }: { visual: ChaosVisual }) {
   return (
     <VisualFrame title="Chaos suite · applied postings" summary={visual.summary} source={visual.source}>
+      <p className="mb-3 text-[12.5px] leading-5 text-ink-2">
+        Each number is how many times the ledger applied one adjustment:{" "}
+        <span className="font-medium text-ink">1</span> is correct,{" "}
+        <span className="font-medium text-fail">2</span> is a double posting.
+      </p>
       <MobileRows visual={visual} />
       <div className="hidden sm:block">
         <table className="w-full border-collapse text-left">

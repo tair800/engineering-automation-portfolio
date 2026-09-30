@@ -2,13 +2,11 @@ import type { ReactNode } from "react";
 
 export function SectionHeading({
   id,
-  index,
   label,
   title,
   children,
 }: {
   id: string;
-  index: string;
   label: string;
   title: string;
   children?: ReactNode;
@@ -16,20 +14,19 @@ export function SectionHeading({
   return (
     <div className="grid gap-4 md:grid-cols-12 md:gap-8">
       <div className="md:col-span-5">
-        <p className="label">
-          <span className="text-faint">{index}</span>
-          <span className="mx-2 text-faint">/</span>
+        <p className="label flex items-center gap-2">
+          <span aria-hidden="true" className="h-px w-5 bg-line-strong" />
           {label}
         </p>
         <h2
           id={id}
-          className="mt-3 text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-ink sm:text-[32px]"
+          className="mt-3 text-balance text-[28px] font-semibold leading-[1.15] tracking-[-0.02em] text-ink sm:text-[32px]"
         >
           {title}
         </h2>
       </div>
       {children ? (
-        <div className="text-[15px] leading-[1.65] text-muted md:col-span-6 md:col-start-7 md:pt-7">
+        <div className="text-pretty text-[15px] leading-[1.65] text-muted md:col-span-6 md:col-start-7 md:pt-7">
           {children}
         </div>
       ) : null}

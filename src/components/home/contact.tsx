@@ -20,7 +20,7 @@ const channels = [
 export function Contact() {
   return (
     <Section id="contact" labelledBy="contact-title">
-      <SectionHeading id="contact-title" index="07" label="Contact" title="Get in touch">
+      <SectionHeading id="contact-title" label="Contact" title="Get in touch">
         For roles, collaboration, or questions about any of the projects.
       </SectionHeading>
       <ul className="mt-12 border-y border-line">

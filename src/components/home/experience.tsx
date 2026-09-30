@@ -6,7 +6,6 @@ export function Experience() {
     <Section id="experience" labelledBy="experience-title">
       <SectionHeading
         id="experience-title"
-        index="05"
         label="Professional experience"
         title="Current role"
       />

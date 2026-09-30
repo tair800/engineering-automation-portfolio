@@ -38,27 +38,16 @@ export async function generateMetadata(props: PageProps<"/projects/[slug]">): Pr
   };
 }
 
-function Block({
-  id,
-  index,
-  label,
-  children,
-}: {
-  id: string;
-  index: string;
-  label: string;
-  children: ReactNode;
-}) {
+function Block({ id, label, children }: { id: string; label: string; children: ReactNode }) {
   return (
     <section
       aria-labelledby={id}
       className="grid gap-5 border-t border-line py-10 sm:py-12 lg:grid-cols-12 lg:gap-8"
     >
       <div className="lg:col-span-3">
-        <h2 id={id} className="label lg:sticky lg:top-20">
-          <span className="text-faint">{index}</span>
-          <span className="mx-2 text-faint">/</span>
-          <span className="text-ink-2">{label}</span>
+        <h2 id={id} className="label flex items-center gap-2 text-ink-2 lg:sticky lg:top-20">
+          <span aria-hidden="true" className="h-px w-5 bg-id" />
+          {label}
         </h2>
       </div>
       <div className="min-w-0 lg:col-span-9">{children}</div>
@@ -100,10 +89,10 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
             <span className="text-ink">{pad(project.index)}</span>
             <span>{project.domain}</span>
           </p>
-          <h1 className="mt-4 max-w-[52rem] text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] text-ink sm:text-[48px]">
+          <h1 className="mt-4 max-w-[52rem] text-balance text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] text-ink sm:text-[48px]">
             {project.name}
           </h1>
-          <p className="mt-4 max-w-[46rem] text-[17px] leading-[1.6] text-ink-2 sm:text-[18px]">
+          <p className="mt-4 max-w-[44rem] text-pretty text-[17px] leading-[1.6] text-ink-2 sm:text-[18px]">
             {project.tagline}
           </p>
           <div className="mt-6">
@@ -116,8 +105,8 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
       </header>
 
       <div className="container-page pb-8">
-        <Block id="overview" index="01" label="Overview">
-          <p className="max-w-[46rem] text-[17px] leading-[1.65] text-ink">{project.summary}</p>
+        <Block id="overview" label="Overview">
+          <p className="max-w-[40rem] text-pretty text-[17px] leading-[1.65] text-ink">{project.summary}</p>
           <dl className="mt-8 grid gap-6 md:grid-cols-3 md:gap-8">
             {overview.map(([term, text]) => (
               <div key={term} className="border-t border-line pt-4">
@@ -128,7 +117,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
           </dl>
         </Block>
 
-        <Block id="evidence" index="02" label="Evidence">
+        <Block id="evidence" label="Evidence">
           <div className="grid gap-px overflow-hidden rounded-[var(--radius)] border border-line bg-line sm:grid-cols-2">
             {project.evidence.map((metric) => (
               <div key={metric.value + metric.label} className="bg-surface p-5 sm:p-6">
@@ -144,15 +133,15 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
           </div>
         </Block>
 
-        <Block id="architecture" index="03" label="Architecture">
+        <Block id="architecture" label="Architecture">
           <FlowDiagram flow={project.flow} />
         </Block>
 
-        <Block id="notes" index="04" label="Engineering notes">
-          <div className="flex max-w-[46rem] flex-col gap-10">
+        <Block id="notes" label="Engineering notes">
+          <div className="flex max-w-[40rem] flex-col gap-10">
             {project.sections.map((section) => (
               <div key={section.heading}>
-                <h3 className="text-[19px] font-semibold leading-7 tracking-[-0.015em] text-ink">
+                <h3 className="text-balance text-[19px] font-semibold leading-7 tracking-[-0.015em] text-ink">
                   {section.heading}
                 </h3>
                 {section.paragraphs.map((paragraph) => (
@@ -175,7 +164,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
           </div>
         </Block>
 
-        <Block id="screens" index="05" label="Screens">
+        <Block id="screens" label="Screens">
           <div className="grid gap-10">
             {project.shots.map((shot) => (
               <ShotFigure key={shot.src} shot={shot} sizes="(min-width: 1200px) 840px, (min-width: 1024px) 70vw, 100vw" />
@@ -183,24 +172,24 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
           </div>
         </Block>
 
-        <Block id="limitations" index="06" label="Limitations">
-          <p className="max-w-[46rem] text-[14.5px] leading-[1.6] text-muted">
+        <Block id="limitations" label="Limitations">
+          <p className="max-w-[40rem] text-[14.5px] leading-[1.6] text-muted">
             As the project states them. Read these before relying on any number above.
           </p>
-          <ul className="mt-5 flex max-w-[46rem] flex-col border-t border-line">
+          <ul className="mt-5 flex max-w-[40rem] flex-col border-t border-line">
             {project.limitations.map((limitation) => (
               <li
                 key={limitation}
                 className="flex gap-3 border-b border-line py-3.5 text-[14.5px] leading-[1.6] text-ink-2"
               >
-                <span aria-hidden="true" className="mt-[11px] h-px w-3 shrink-0 bg-fail" />
+                <span aria-hidden="true" className="mt-[11px] h-px w-3 shrink-0 bg-line-strong" />
                 {limitation}
               </li>
             ))}
           </ul>
         </Block>
 
-        <Block id="facts" index="07" label="Facts and stack">
+        <Block id="facts" label="Facts and stack">
           <dl className="grid gap-px overflow-hidden rounded-[var(--radius)] border border-line bg-line sm:grid-cols-2">
             {project.facts.map((fact) => (
               <div key={fact.label} className="bg-surface px-5 py-4">

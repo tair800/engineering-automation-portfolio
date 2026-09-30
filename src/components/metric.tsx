@@ -1,14 +1,16 @@
 import type { Metric as MetricData, Tone } from "@/data/types";
 
+/* Positive figures stay in ink; only negative results take a colour, and a word with it. */
 const toneText: Record<Tone, string> = {
-  pass: "text-pass",
+  pass: "text-ink",
   fail: "text-fail",
   neutral: "text-ink",
 };
 
+/* Only negative results carry a word: a reader must not mistake one for a success. */
 const toneWord: Record<Tone, string | null> = {
-  pass: "Held",
-  fail: "Negative",
+  pass: null,
+  fail: "Negative result",
   neutral: null,
 };
 
@@ -40,7 +42,7 @@ export function Metric({ metric, size = "md" }: { metric: MetricData; size?: "md
         </span>
         <ToneTag tone={metric.tone} />
       </div>
-      <p className="text-[13.5px] leading-5 text-ink-2">{metric.label}</p>
+      <p className="text-pretty text-[13.5px] leading-5 text-ink-2">{metric.label}</p>
       {metric.note ? <p className="text-[12.5px] leading-5 text-muted">{metric.note}</p> : null}
     </div>
   );

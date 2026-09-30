@@ -31,8 +31,8 @@ export default async function Image() {
             <div style={{ fontSize: 76, fontWeight: 600, letterSpacing: -3, marginTop: 28, lineHeight: 1 }}>
               {profile.name}
             </div>
-            <div style={{ fontSize: 34, color: ogColors.muted, marginTop: 14 }}>{profile.role}</div>
-            <div style={{ fontSize: 26, lineHeight: 1.4, color: ogColors.ink2, marginTop: 36 }}>
+            <div style={{ fontFamily: "Geist Mono", fontSize: 28, color: ogColors.muted, marginTop: 18 }}>{profile.role}</div>
+            <div style={{ fontFamily: "Geist Mono", fontSize: 21, lineHeight: 1.55, color: ogColors.ink2, marginTop: 36 }}>
               {profile.headline}
             </div>
           </div>
@@ -63,7 +63,7 @@ export default async function Image() {
               >
                 <div style={{ width: 8, height: 8, borderRadius: 2, background: ogIdentity[project.identity], marginRight: 14 }} />
                 <div style={{ fontFamily: "Geist Mono", fontSize: 15, color: ogColors.muted, width: 34 }}>{pad(project.index)}</div>
-                <div style={{ fontSize: 19, color: ogColors.ink }}>{project.name}</div>
+                <div style={{ fontFamily: "Geist Mono", fontSize: 17, color: ogColors.ink }}>{project.name}</div>
               </div>
             ))}
           </div>

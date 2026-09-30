@@ -33,10 +33,10 @@ export const ogColors = {
 /** The dark-theme identity hues, matching globals.css. */
 export const ogIdentity: Record<string, string> = {
   ledger: "#2dd4bf",
-  market: "#fbbf24",
-  callsite: "#38bdf8",
+  market: "#9a9ea8",
+  callsite: "#9a9ea8",
   authz: "#fb923c",
-  resolver: "#a5b4fc",
+  resolver: "#9a9ea8",
   bordereaux: "#60a5fa",
   parts: "#e3c16f",
 };

@@ -55,7 +55,7 @@ describe("projects", () => {
     for (const p of projects) {
       expect(p.githubUrl).toBe(`https://github.com/tair800/${p.slug}`);
       expect(p.liveUrl).toMatch(/^https:\/\/[a-z0-9-]+\.(vercel\.app|onrender\.com)$/);
-      if (p.backendUrl) expect(p.backendUrl).toMatch(/^https:\/\/[a-z0-9-]+\.onrender\.com$/);
+      if (p.backendUrl) expect(p.backendUrl).toMatch(/^https:\/\/[a-z0-9-]+\.onrender\.com\/[\w./-]+$/);
     }
   });
 

@@ -190,6 +190,8 @@ export interface Project {
   slug: string;
   index: number;
   name: string;
+  /** A one- or two-word name for compact references. */
+  short: string;
   /** The business area, in two or three words. */
   domain: string;
   tagline: string;

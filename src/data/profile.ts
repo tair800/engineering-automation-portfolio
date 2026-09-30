@@ -15,7 +15,9 @@ export const profile = {
   headline:
     "Building production AI automation, agentic systems, retrieval systems and reliable backend infrastructure.",
   intro:
-    "I build automation for work where a mistake is expensive: a payment posted twice, an agent acting beyond its authority, an answer quoting a superseded procedure. Each public project below states in advance the test that would prove it wrong, and publishes the result — including one whose own release gate failed.",
+    "I build automation for work where a mistake is expensive: a ledger adjustment posted twice, an agent acting beyond its authority, an answer quoting a superseded procedure. Each public project below states in advance the test that would prove it wrong, and publishes the result — including one whose own release gate failed.",
+  independence:
+    "The seven projects below are independent public work, built on synthetic or public data.",
   githubUrl: "https://github.com/tair800",
   linkedinUrl: "https://www.linkedin.com/in/tahir-aslanli-075b4924b",
   experience: [

@@ -15,63 +15,47 @@ export interface CapabilityGroup {
   items: Capability[];
 }
 
-const ALL = [
-  "ledger-exception-control-plane",
-  "market-approach-desk",
-  "callsite-impact",
-  "agent-authz-broker",
-  "counterparty-resolver",
-  "bordereaux-reconciler",
-  "parts-answer-gate",
-];
+const LEDGER = "ledger-exception-control-plane";
+const MARKET = "market-approach-desk";
+const CALLSITE = "callsite-impact";
+const AUTHZ = "agent-authz-broker";
+const RESOLVER = "counterparty-resolver";
+const BORDEREAUX = "bordereaux-reconciler";
+const PARTS = "parts-answer-gate";
+
+export const ALL_PROJECTS = [LEDGER, MARKET, CALLSITE, AUTHZ, RESOLVER, BORDEREAUX, PARTS];
 
 export const capabilityGroups: CapabilityGroup[] = [
   {
     title: "AI systems",
     items: [
+      { name: "LLM integration with closed, validated outputs", projects: [LEDGER], role: true },
+      { name: "RAG with extractive answers and verbatim citations", projects: [PARTS], role: true },
+      { name: "Hybrid retrieval: BM25 and embeddings", projects: [PARTS] },
+      { name: "Vector databases", projects: [], role: true },
+      { name: "pgvector in PostgreSQL", projects: [PARTS] },
+      { name: "MCP servers and agent authorisation", projects: [AUTHZ], role: true },
       {
-        name: "LLM integration with closed, validated outputs",
-        projects: ["ledger-exception-control-plane"],
-        role: true,
+        name: "Evaluation against predeclared baselines",
+        projects: [LEDGER, CALLSITE, RESOLVER, BORDEREAUX, PARTS],
       },
-      {
-        name: "Retrieval-augmented answers with verbatim citations",
-        projects: ["parts-answer-gate"],
-        role: true,
-      },
-      { name: "Hybrid retrieval: BM25 and embeddings", projects: ["parts-answer-gate"] },
-      { name: "Vector databases: pgvector (HNSW)", projects: ["parts-answer-gate"], role: true },
-      { name: "MCP servers and agent authorisation", projects: ["agent-authz-broker"], role: true },
-      {
-        name: "Evaluation against predeclared baselines and hold-out sets",
-        projects: [
-          "ledger-exception-control-plane",
-          "callsite-impact",
-          "counterparty-resolver",
-          "bordereaux-reconciler",
-          "parts-answer-gate",
-        ],
-      },
+      { name: "Frozen hold-out evaluation", projects: [CALLSITE, RESOLVER, BORDEREAUX, PARTS] },
     ],
   },
   {
     title: "Automation",
     items: [
-      { name: "n8n workflows", projects: ["market-approach-desk"], role: true },
+      { name: "n8n workflows", projects: [MARKET], role: true },
       {
-        name: "Scheduled and concurrent workflow execution",
-        projects: ["market-approach-desk", "ledger-exception-control-plane"],
+        name: "Concurrency under overlapping runs and competing workers",
+        projects: [MARKET, LEDGER],
       },
       { name: "REST API integrations", projects: [], role: true },
-      { name: "OpenAPI change-impact analysis", projects: ["callsite-impact"] },
+      { name: "OpenAPI change-impact analysis", projects: [CALLSITE] },
       { name: "AI-driven data pipelines in Dataiku", projects: [], role: true },
       {
         name: "Business-process automation with human approval",
-        projects: [
-          "ledger-exception-control-plane",
-          "counterparty-resolver",
-          "bordereaux-reconciler",
-        ],
+        projects: [LEDGER, RESOLVER, BORDEREAUX],
         role: true,
       },
     ],
@@ -79,73 +63,40 @@ export const capabilityGroups: CapabilityGroup[] = [
   {
     title: "Backend",
     items: [
-      { name: "Python · FastAPI", projects: ALL },
-      {
-        name: "PostgreSQL · SQLAlchemy · Alembic",
-        projects: [
-          "ledger-exception-control-plane",
-          "market-approach-desk",
-          "agent-authz-broker",
-          "bordereaux-reconciler",
-          "parts-answer-gate",
-        ],
-        role: true,
-      },
+      { name: "Python · FastAPI", projects: ALL_PROJECTS },
+      { name: "PostgreSQL", projects: [LEDGER, MARKET, AUTHZ, BORDEREAUX, PARTS], role: true },
+      { name: "SQLAlchemy · Alembic migrations", projects: [LEDGER, MARKET, AUTHZ, BORDEREAUX, PARTS] },
       { name: "C# / .NET REST APIs", projects: [], role: true },
       { name: "MS SQL", projects: [], role: true },
-      {
-        name: "TypeScript · Next.js operator consoles",
-        projects: [
-          "ledger-exception-control-plane",
-          "market-approach-desk",
-          "callsite-impact",
-          "agent-authz-broker",
-        ],
-      },
+      { name: "TypeScript · Next.js consoles", projects: [LEDGER, MARKET, CALLSITE, AUTHZ] },
     ],
   },
   {
     title: "Reliability",
     items: [
-      {
-        name: "Idempotency and at-most-once side effects",
-        projects: ["ledger-exception-control-plane", "market-approach-desk", "agent-authz-broker"],
-      },
+      { name: "Idempotency and at-most-once side effects", projects: [LEDGER, MARKET, AUTHZ] },
       {
         name: "Row claiming: FOR UPDATE SKIP LOCKED, conditional UPDATE",
-        projects: ["ledger-exception-control-plane", "market-approach-desk", "agent-authz-broker"],
+        projects: [LEDGER, MARKET, AUTHZ],
       },
-      {
-        name: "Transactional outbox, bounded retry, dead-letter queue",
-        projects: ["ledger-exception-control-plane"],
-      },
-      {
-        name: "Exact decimal money",
-        projects: ["ledger-exception-control-plane", "bordereaux-reconciler"],
-      },
+      { name: "Transactional outbox, bounded retry, dead-letter queue", projects: [LEDGER] },
+      { name: "Exact decimal money", projects: [LEDGER, BORDEREAUX] },
       {
         name: "Planted-breach and mutation testing",
-        projects: [
-          "ledger-exception-control-plane",
-          "agent-authz-broker",
-          "counterparty-resolver",
-          "bordereaux-reconciler",
-          "parts-answer-gate",
-        ],
+        projects: [LEDGER, AUTHZ, RESOLVER, BORDEREAUX, PARTS],
       },
-      { name: "QA and automated testing", projects: ALL, role: true },
+      { name: "QA and automated testing", projects: ALL_PROJECTS, role: true },
     ],
   },
   {
     title: "Infrastructure",
     items: [
-      {
-        name: "Docker",
-        projects: ALL.filter((slug) => slug !== "callsite-impact"),
-      },
-      { name: "GitHub Actions CI", projects: ALL },
-      { name: "Terraform — validated in CI, not applied", projects: ["bordereaux-reconciler"] },
-      { name: "Vercel · Render · Neon", projects: ALL },
+      { name: "Docker", projects: ALL_PROJECTS.filter((slug) => slug !== CALLSITE) },
+      { name: "GitHub Actions CI", projects: ALL_PROJECTS },
+      { name: "Terraform — validated in CI, not applied", projects: [BORDEREAUX] },
+      { name: "Vercel", projects: [LEDGER, MARKET, CALLSITE, AUTHZ] },
+      { name: "Render", projects: [LEDGER, MARKET, AUTHZ, RESOLVER, BORDEREAUX, PARTS] },
+      { name: "Neon (serverless PostgreSQL)", projects: [LEDGER, MARKET, AUTHZ, PARTS] },
       { name: "Windows and Linux", projects: [], role: true },
     ],
   },

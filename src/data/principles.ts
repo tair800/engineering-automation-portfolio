@@ -23,7 +23,7 @@ export const principles: Principle[] = [
   },
   {
     title: "Measure against real baselines",
-    body: "Every headline number sits beside the simplest thing that could have worked — a constant answer, a naive branch, header matching, a single identifier rule. Sometimes the baseline wins, and that is published too.",
+    body: "Every accuracy, precision and recall figure is published beside the simplest thing that could have worked — a constant answer, a naive branch, header matching, a single identifier rule. Sometimes the baseline wins, and that is published too.",
     seenIn: [
       "ledger-exception-control-plane",
       "callsite-impact",
@@ -34,13 +34,13 @@ export const principles: Principle[] = [
   },
   {
     title: "Publish negative results",
-    body: "A release gate that failed is reported as failed. A hold-out is scored once, and a spent hold-out is not reused to fix what it revealed.",
+    body: "A release gate that failed is reported as failed, with its criteria unchanged. A hold-out is frozen before it is scored, and every change made after a score is disclosed.",
     seenIn: ["parts-answer-gate", "callsite-impact", "ledger-exception-control-plane"],
   },
   {
     title: "Fail closed at security boundaries",
-    body: "A token for the wrong audience, a scope the delegator never had, a missing or spent approval, an answer the evidence cannot support: each is refused, and the refusal is recorded.",
-    seenIn: ["agent-authz-broker", "parts-answer-gate", "ledger-exception-control-plane"],
+    body: "A token for the wrong audience, a scope the delegator never had, a missing or spent approval, a citation to evidence that does not exist: each is refused, and the refusal is recorded.",
+    seenIn: ["agent-authz-broker", "ledger-exception-control-plane"],
   },
   {
     title: "Design retry and idempotency explicitly",

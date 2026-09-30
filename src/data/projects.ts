@@ -10,9 +10,10 @@ export const projects: Project[] = [
     slug: "ledger-exception-control-plane",
     index: 1,
     name: "Ledger Exception Control Plane",
+    short: "Ledger",
     domain: "Finance operations",
     tagline:
-      "Unmatched settlement lines become approved ledger adjustments, applied at the ledger at most once per operation.",
+      "Unmatched settlement lines become approved ledger adjustments, applied at most once per operation, as counted by a simulated ledger.",
     identity: "ledger",
     status: { kind: "complete", label: "Complete · frozen", deployment: "Deployed / live" },
     flagship: true,
@@ -35,23 +36,23 @@ export const projects: Project[] = [
     evidence: [
       {
         value: "21 / 21",
-        label: "chaos-suite cells where main applied the financial effect at most once",
+        label: "failure-scenario runs (7 scenarios × 3 ledger configurations) in which no adjustment was applied twice, counted by the simulated ledger itself",
         tone: "pass",
         headline: true,
       },
       {
         value: "5 of 7",
-        label: "failure scenarios in which the naive baseline double-posted",
+        label: "failure scenarios in which a deliberately naive version posted the same adjustment twice",
         note: "The baseline is a legitimate implementation missing specific safeguards, documented omission by omission.",
       },
       {
         value: "42 / 42",
-        label: "observed cells matching expectations declared before the run",
+        label: "results, across both versions, that matched expectations declared before the run",
       },
       {
         value: "27.9%",
-        label: "live model accuracy over 247 answered records, against an 85.6% constant-answer baseline",
-        note: "Published as a negative result. On the 36 priceable records it scored 97.2%.",
+        label: "live model accuracy over 247 answered records; answering “escalate” every time would score 85.6%",
+        note: "The model often proposed a treatment where escalation was correct. The account policy refuses all 177 such answers, and human approval stands in front of the one that would have priced. On the 36 priceable records it scored 97.2%.",
         tone: "fail",
         headline: true,
       },
@@ -201,13 +202,14 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/ledger-exception-control-plane",
     liveUrl: "https://ledger-exception-control-plane-livid.vercel.app",
-    backendUrl: "https://lecp-demo-api.onrender.com",
-    backendLabel: "API",
+    backendUrl: "https://lecp-demo-api.onrender.com/docs",
+    backendLabel: "API docs",
   },
   {
     slug: "market-approach-desk",
     index: 2,
     name: "Market Approach Desk",
+    short: "Market Desk",
     domain: "Insurance broking",
     tagline:
       "One broker workflow built twice — in n8n and in typed Python — and counted at a fake carrier while two executions are forced to overlap.",
@@ -234,7 +236,7 @@ export const projects: Project[] = [
       {
         value: "2 vs 1",
         label: "approaches the fake carrier counted under forced overlap: n8n arm vs Python arm",
-        note: "The n8n arm runs through a node-by-node simulator of its exported workflow, not a live n8n instance.",
+        note: "The n8n arm runs through a node-by-node simulator of its exported workflow, not a live n8n instance. The duplicate comes from the workflow having no claim boundary across executions, not from n8n itself.",
         headline: true,
       },
       {
@@ -367,13 +369,14 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/market-approach-desk",
     liveUrl: "https://market-approach-desk.vercel.app",
-    backendUrl: "https://market-approach-desk-api.onrender.com",
-    backendLabel: "API",
+    backendUrl: "https://market-approach-desk-api.onrender.com/docs",
+    backendLabel: "API docs",
   },
   {
     slug: "callsite-impact",
     index: 3,
     name: "Callsite Impact",
+    short: "Callsite",
     domain: "API change analysis",
     tagline:
       "Which of our call sites actually break when a vendor ships a new API version — graded against the compiler.",
@@ -399,7 +402,7 @@ export const projects: Project[] = [
     evidence: [
       {
         value: "0.963 → 0.328",
-        label: "F1 on development vs a held-out slice frozen before scoring — both published",
+        label: "F1 score on the development corpus vs a slice held out and frozen before scoring; on unseen APIs it misses four breakages in five",
         note: "The development F1 is a post-selection number; the held-out one is the unbiased estimate.",
         tone: "fail",
         headline: true,
@@ -407,6 +410,7 @@ export const projects: Project[] = [
       {
         value: "1.000",
         label: "held-out precision: zero false positives across 1,077 clean call sites",
+        note: "At a held-out recall of 0.196.",
         tone: "pass",
         headline: true,
       },
@@ -531,13 +535,14 @@ export const projects: Project[] = [
     slug: "agent-authz-broker",
     index: 4,
     name: "Agent Authorization Broker",
+    short: "Authz Broker",
     domain: "AI agent security",
     tagline: "An agent can request an action. It cannot manufacture the authority to perform one.",
     identity: "authz",
     status: { kind: "complete", label: "Complete · frozen", deployment: "Deployed / live" },
     flagship: true,
     summary:
-      "An MCP resource server that computes an agent's authority from the token's audience, the whole delegation chain and a human approval it looks up itself — and lets each approval authorise at most one effect.",
+      "An MCP resource server that computes an agent's authority from the token's audience, the whole delegation chain and an approval it looks up itself — granted with an approver credential the agent cannot hold — and lets each approval authorise at most one effect.",
     problem:
       "A validly signed agent token is not authorisation. It might have been minted for another service, claim a scope the delegating human never had, or ask for something irreversible that nobody approved. A resource server that checks the signature and stops has caught none of these.",
     built:
@@ -548,14 +553,14 @@ export const projects: Project[] = [
       problem:
         "A validly signed agent token is not authorisation: it may be meant for another service, over-claim its scope, or request an irreversible action nobody approved.",
       built:
-        "An MCP resource server that checks audience, intersects scope down the delegation chain, and lets each human approval authorise at most one effect, enforced in PostgreSQL.",
+        "An MCP resource server that checks audience, intersects scope down the delegation chain, and lets each approval authorise at most one effect, enforced in PostgreSQL.",
       hardPart:
         "Showing every control is load-bearing — each was removed in turn and the suite went red — and publishing the holes later reviews found.",
     },
     evidence: [
       {
         value: "0 of 5",
-        label: "attacks permitted by the hardened server; a naive verifier — signature, expiry and the leaf's scope claim — permits 2 of 5",
+        label: "attacks that got past the hardened server; a naive verifier that takes the token's own scope claim at its word let 2 of 5 through",
         tone: "pass",
         headline: true,
       },
@@ -565,7 +570,7 @@ export const projects: Project[] = [
       },
       {
         value: "12 / 12",
-        label: "planted breaches caught by the test suite, replayed in CI",
+        label: "security controls removed one at a time, every removal caught by the tests — replayed in CI",
         tone: "pass",
         headline: true,
       },
@@ -701,7 +706,7 @@ export const projects: Project[] = [
       "AI agent security",
       "Authorisation",
       "JWT / JWKS",
-      "Human approval",
+      "Approval gating",
       "One-time approval consumption",
       "Concurrency control",
       "Rate limiting",
@@ -734,13 +739,14 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/agent-authz-broker",
     liveUrl: "https://agent-authz-broker.vercel.app",
-    backendUrl: "https://agent-authz-broker.onrender.com",
-    backendLabel: "MCP server",
+    backendUrl: "https://agent-authz-broker.onrender.com/.well-known/oauth-protected-resource/mcp",
+    backendLabel: "MCP metadata",
   },
   {
     slug: "counterparty-resolver",
     index: 5,
     name: "Counterparty Resolver",
+    short: "Resolver",
     domain: "Entity resolution",
     tagline:
       "Do two records refer to the same real-world counterparty? Evaluated against duplicates a registrar adjudicated.",
@@ -766,7 +772,7 @@ export const projects: Project[] = [
     evidence: [
       {
         value: "0.9980",
-        label: "precision over 10,532 development pairs — six false merges",
+        label: "precision over 10,532 development pairs — six false merges, against seven for the best baseline",
         note: "Held out: 0.9986 with one false merge, or 0.9972 with development-only priors. The project quotes the development figure: the hold-out's negatives are easier, so its absolute precision is not comparable.",
         tone: "pass",
         headline: true,
@@ -887,6 +893,7 @@ export const projects: Project[] = [
     slug: "bordereaux-reconciler",
     index: 6,
     name: "Bordereaux Reconciler",
+    short: "Bordereaux",
     domain: "Insurance reconciliation",
     tagline:
       "Delegated-authority bordereaux reconciled against a carrier ledger, with exact decimal money and cell-level lineage.",
@@ -912,13 +919,13 @@ export const projects: Project[] = [
     evidence: [
       {
         value: "0",
-        label: "false MATCHED on a frozen hold-out of 715 rows carrying 90 injected discrepancies",
+        label: "rows wrongly marked MATCHED in a frozen hold-out of 715 rows seeded with 90 discrepancies",
         tone: "pass",
         headline: true,
       },
       {
         value: "0.913",
-        label: "hold-out mapping accuracy; the best of four predeclared baselines reaches 0.652",
+        label: "column-mapping accuracy on the hold-out files; the best of four header-matching baselines reaches 0.652",
         note: "Hold-out numbers were visible in debug output before scoring, so the project treats this figure as slightly weaker; the development figure is also 0.913.",
         tone: "pass",
         headline: true,
@@ -1066,6 +1073,7 @@ export const projects: Project[] = [
     slug: "parts-answer-gate",
     index: 7,
     name: "Parts Answer Gate",
+    short: "Parts Gate",
     domain: "Retrieval (RAG)",
     tagline:
       "Effectivity-aware retrieval with citations, whose own pre-registered release gate failed — and is published as failed.",
@@ -1095,13 +1103,13 @@ export const projects: Project[] = [
     evidence: [
       {
         value: "4 of 12",
-        label: "pre-registered kill conditions failed — E, F, I and K — and none was lowered, deleted or marked xfail",
+        label: "release criteria, fixed before any source file existed, that failed — E, F, I and K; none was lowered, removed or disabled afterwards",
         tone: "fail",
         headline: true,
       },
       {
         value: "0",
-        label: "superseded passages returned over 600 as-of queries at 5 dates",
+        label: "superseded passages returned across 600 date-specific queries (120 questions at 5 dates)",
         tone: "pass",
         headline: true,
       },
@@ -1200,7 +1208,7 @@ export const projects: Project[] = [
       "Python 3.12",
       "FastAPI",
       "PostgreSQL 16",
-      "pgvector (HNSW)",
+      "pgvector",
       "BM25",
       "fastembed",
       "Neon",

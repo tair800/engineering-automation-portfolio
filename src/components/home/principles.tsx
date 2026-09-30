@@ -33,7 +33,7 @@ export function Principles() {
                 return (
                   <Link
                     key={slug}
-                    href={`/projects/${slug}`}
+                    href={`/projects/${slug}`} prefetch={false}
                     data-identity={project.identity}
                     className="link-underline inline-block py-1 hover:text-id"
                   >

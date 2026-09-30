@@ -22,7 +22,7 @@ function EvidenceChips({ slugs, role }: { slugs: string[]; role?: boolean }) {
           .map((project) => (
             <Link
               key={project.slug}
-              href={`/projects/${project.slug}`}
+              href={`/projects/${project.slug}`} prefetch={false}
               title={project.name}
               data-identity={project.identity}
               className={chip}

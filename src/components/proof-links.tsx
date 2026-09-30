@@ -17,7 +17,7 @@ export function ProofLinks({
       {caseStudy ? (
         <li>
           <Link
-            href={`/projects/${project.slug}`}
+            href={`/projects/${project.slug}`} prefetch={false}
             className="inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-sm)] bg-ink px-3 text-[13px] font-medium text-bg transition-opacity hover:opacity-85"
           >
             Case study <ArrowRight className="size-3.5" />

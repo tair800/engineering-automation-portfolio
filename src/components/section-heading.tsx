@@ -46,7 +46,13 @@ export function Section({
   className?: string;
 }) {
   return (
-    <section id={id} aria-labelledby={labelledBy} className={`border-t border-line ${className}`}>
+    // Sections below the hero are skipped by the renderer until they approach the viewport; the
+    // long home page otherwise spends most of its first second on style and layout.
+    <section
+      id={id}
+      aria-labelledby={labelledBy}
+      className={`border-t border-line [contain-intrinsic-size:auto_1200px] [content-visibility:auto] ${className}`}
+    >
       <div className="container-page py-16 sm:py-20 lg:py-24">{children}</div>
     </section>
   );

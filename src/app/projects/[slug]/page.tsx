@@ -231,7 +231,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
         >
           {previous ? (
             <Link
-              href={`/projects/${previous.slug}`}
+              href={`/projects/${previous.slug}`} prefetch={false}
               data-identity={previous.identity}
               className="group flex flex-col gap-1 bg-surface p-5 hover:bg-surface-2"
             >
@@ -245,7 +245,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
           )}
           {next ? (
             <Link
-              href={`/projects/${next.slug}`}
+              href={`/projects/${next.slug}`} prefetch={false}
               data-identity={next.identity}
               className="group flex flex-col items-end gap-1 bg-surface p-5 text-right hover:bg-surface-2"
             >

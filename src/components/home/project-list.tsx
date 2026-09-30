@@ -21,7 +21,7 @@ function Identity({ project }: { project: Project }) {
 function ProjectTitle({ project, id }: { project: Project; id: string }) {
   return (
     <h3 id={id} className="text-balance text-[20px] font-semibold leading-7 tracking-[-0.015em] text-ink">
-      <Link href={`/projects/${project.slug}`} className="hover:text-id">
+      <Link href={`/projects/${project.slug}`} prefetch={false} className="hover:text-id">
         {project.name}
       </Link>
     </h3>

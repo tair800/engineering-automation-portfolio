@@ -36,7 +36,7 @@ export function Results() {
               className="grid gap-x-6 gap-y-3 border-b border-line py-5 last:border-0 md:grid-cols-[15rem_1fr]"
             >
               <Link
-                href={`/projects/${project.slug}`}
+                href={`/projects/${project.slug}`} prefetch={false}
                 className="group flex items-baseline gap-2 self-start text-[13.5px] font-medium text-ink md:pt-1"
               >
                 <span className="num font-mono text-[11px] text-muted group-hover:text-id">
@@ -92,7 +92,7 @@ export function Results() {
               search through the pgvector index — and it is closed on that result.
             </p>
             <Link
-              href={`/projects/${parts.slug}`}
+              href={`/projects/${parts.slug}`} prefetch={false}
               className="mt-6 inline-flex items-center gap-1.5 self-start text-[14px] font-medium text-ink hover:text-id"
             >
               Read the case study <ArrowRight className="size-4" />

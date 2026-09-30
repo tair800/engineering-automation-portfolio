@@ -62,7 +62,7 @@ export function Hero() {
               {projects.map((project) => (
                 <li key={project.slug} data-identity={project.identity} className="border-b border-line last:border-0">
                   <Link
-                    href={`/projects/${project.slug}`}
+                    href={`/projects/${project.slug}`} prefetch={false}
                     className="group grid grid-cols-[2rem_1fr] items-center gap-x-3 px-4 py-3 transition-colors hover:bg-surface-2"
                   >
                     <span className="num font-mono text-[11px] text-muted group-hover:text-id">

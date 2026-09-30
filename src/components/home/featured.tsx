@@ -28,7 +28,7 @@ function Title({ project, id }: { project: Project; id: string }) {
         id={id}
         className="text-balance text-[24px] font-semibold leading-8 tracking-[-0.02em] text-ink sm:text-[26px]"
       >
-        <Link href={`/projects/${project.slug}`} className="hover:text-id">
+        <Link href={`/projects/${project.slug}`} prefetch={false} className="hover:text-id">
           {project.name}
         </Link>
       </h3>

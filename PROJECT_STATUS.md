@@ -34,7 +34,11 @@
 
 - Bordereaux Reconciler's free demo database expires on 24 October 2026 (stated on its case
   study); its live screens will empty after that unless that project re-provisions it.
-- Free-tier project backends sleep; a first request can take about a minute (stated in the hero).
+- Free-tier project backends sleep. Ledger Exception Control Plane and Market Approach Desk now
+  explain and wait out a cold start in their own consoles (measured on 2026-09-30: 44 s and 36 s),
+  and Ledger Exception Control Plane offers one-click public demo roles. The three demos served
+  directly from Render show Render's own wake-up screen for 33–64 s, so only those three carry a
+  cold-start note beside their Live demo link.
 - Agent Authorization Broker's repository does not record which host its screenshots were taken
   from, so the site labels them as screenshots from the repository rather than the live
   deployment.

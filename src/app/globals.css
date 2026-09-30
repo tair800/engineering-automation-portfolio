@@ -1,0 +1,289 @@
+@import "tailwindcss";
+
+/* The theme is set on <html data-theme> by an inline script before first paint. Without script,
+   the media-query block below applies the reader's system preference instead. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  color-scheme: light;
+
+  --bg: #f6f6f3;
+  --bg-sunk: #efefea;
+  --surface: #ffffff;
+  --surface-2: #fafaf8;
+  --line: #e1e1db;
+  --line-strong: #cbcbc3;
+  --grid: rgb(20 22 26 / 0.05);
+
+  --ink: #141519;
+  --ink-2: #363941;
+  --muted: #5c606a;
+  --faint: #8b8f98;
+
+  --focus: #2155d6;
+  --pass: #17703a;
+  --pass-bg: #e7f2ea;
+  --fail: #b42318;
+  --fail-bg: #fbeceb;
+  --warn: #8a5a00;
+  --warn-bg: #faf1de;
+
+  /* One hue per project, used only inside that project's context. */
+  --ledger: #0f766e;
+  --market: #b45309;
+  --callsite: #0369a1;
+  --authz: #c2410c;
+  --resolver: #4f46e5;
+  --bordereaux: #1d4ed8;
+  --parts: #8a6a00;
+
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 2px rgb(20 22 26 / 0.05);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #0c0d10;
+  --bg-sunk: #08090b;
+  --surface: #131418;
+  --surface-2: #17191d;
+  --line: #25272d;
+  --line-strong: #353840;
+  --grid: rgb(255 255 255 / 0.04);
+
+  --ink: #ececee;
+  --ink-2: #c6c8ce;
+  --muted: #9a9ea8;
+  --faint: #6c7079;
+
+  --focus: #86a8ff;
+  --pass: #4ade80;
+  --pass-bg: rgb(74 222 128 / 0.1);
+  --fail: #f87171;
+  --fail-bg: rgb(248 113 113 / 0.1);
+  --warn: #facc15;
+  --warn-bg: rgb(250 204 21 / 0.1);
+
+  --ledger: #2dd4bf;
+  --market: #fbbf24;
+  --callsite: #38bdf8;
+  --authz: #fb923c;
+  --resolver: #a5b4fc;
+  --bordereaux: #60a5fa;
+  --parts: #e3c16f;
+
+  --shadow: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --bg: #0c0d10;
+    --bg-sunk: #08090b;
+    --surface: #131418;
+    --surface-2: #17191d;
+    --line: #25272d;
+    --line-strong: #353840;
+    --grid: rgb(255 255 255 / 0.04);
+
+    --ink: #ececee;
+    --ink-2: #c6c8ce;
+    --muted: #9a9ea8;
+    --faint: #6c7079;
+
+    --focus: #86a8ff;
+    --pass: #4ade80;
+    --pass-bg: rgb(74 222 128 / 0.1);
+    --fail: #f87171;
+    --fail-bg: rgb(248 113 113 / 0.1);
+    --warn: #facc15;
+    --warn-bg: rgb(250 204 21 / 0.1);
+
+    --ledger: #2dd4bf;
+    --market: #fbbf24;
+    --callsite: #38bdf8;
+    --authz: #fb923c;
+    --resolver: #a5b4fc;
+    --bordereaux: #60a5fa;
+    --parts: #e3c16f;
+
+    --shadow: none;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-sunk: var(--bg-sunk);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-focus: var(--focus);
+  --color-pass: var(--pass);
+  --color-pass-bg: var(--pass-bg);
+  --color-fail: var(--fail);
+  --color-fail-bg: var(--fail-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-id: var(--id);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --radius-card: var(--radius);
+  --radius-chip: var(--radius-sm);
+}
+
+/* A project's identity hue, exposed to Tailwind as `id` (text-id, border-id, bg-id). */
+[data-identity="ledger"] { --id: var(--ledger); }
+[data-identity="market"] { --id: var(--market); }
+[data-identity="callsite"] { --id: var(--callsite); }
+[data-identity="authz"] { --id: var(--authz); }
+[data-identity="resolver"] { --id: var(--resolver); }
+[data-identity="bordereaux"] { --id: var(--bordereaux); }
+[data-identity="parts"] { --id: var(--parts); }
+
+@layer base {
+  html {
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--focus) 22%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Anchored sections clear the sticky header. */
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  .container-page {
+    width: 100%;
+    max-width: 75rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .container-page {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Small uppercase monospace labels: section indices, field names, tags. */
+  .label {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    line-height: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* The engineering grid behind the hero, faded out towards the edges. */
+  .grid-backdrop {
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 70% at 30% 20%, #000 40%, transparent 100%);
+  }
+
+  /* Marks the one non-deterministic step in an architecture diagram. */
+  .hatch {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--id, var(--ink)) 9%, transparent) 0 1px,
+      transparent 1px 7px
+    );
+  }
+
+  .link-underline {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--line-strong);
+    transition: text-decoration-color 150ms ease;
+  }
+
+  .link-underline:hover {
+    text-decoration-color: currentColor;
+  }
+
+  /* Screenshots with a dark-mode capture swap with the theme, with or without script. */
+  .shot-dark {
+    display: none;
+  }
+
+  [data-theme="dark"] .shot-light.has-dark {
+    display: none;
+  }
+
+  [data-theme="dark"] .shot-dark {
+    display: block;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) .shot-light.has-dark {
+      display: none;
+    }
+
+    :root:not([data-theme]) .shot-dark {
+      display: block;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

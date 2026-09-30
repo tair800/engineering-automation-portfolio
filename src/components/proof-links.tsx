@@ -8,43 +8,70 @@ const pill =
 export function ProofLinks({
   project,
   caseStudy = true,
+  note = true,
 }: {
   project: Project;
   caseStudy?: boolean;
+  /** Show the project's cold-start note under the links, where it has one. */
+  note?: boolean;
 }) {
   return (
-    <ul className="flex flex-wrap gap-2" aria-label={`${project.name} links`}>
-      {caseStudy ? (
+    <div className="flex flex-col gap-2">
+      <ul className="flex flex-wrap gap-2" aria-label={`${project.name} links`}>
+        {caseStudy ? (
+          <li>
+            <Link
+              href={`/projects/${project.slug}`}
+              prefetch={false}
+              className="inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-sm)] bg-ink px-3 text-[13px] font-medium text-bg transition-opacity hover:opacity-85"
+            >
+              Case study <ArrowRight className="size-3.5" />
+              <span className="sr-only">: {project.name}</span>
+            </Link>
+          </li>
+        ) : null}
         <li>
-          <Link
-            href={`/projects/${project.slug}`} prefetch={false}
-            className="inline-flex h-8 items-center gap-1.5 rounded-[var(--radius-sm)] bg-ink px-3 text-[13px] font-medium text-bg transition-opacity hover:opacity-85"
+          <a
+            href={project.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={pill}
           >
-            Case study <ArrowRight className="size-3.5" />
-            <span className="sr-only">: {project.name}</span>
-          </Link>
-        </li>
-      ) : null}
-      <li>
-        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className={pill}>
-          Live demo <ArrowUpRight className="size-3.5 text-faint" />
-          <span className="sr-only">(opens in a new tab)</span>
-        </a>
-      </li>
-      <li>
-        <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={pill}>
-          GitHub <ArrowUpRight className="size-3.5 text-faint" />
-          <span className="sr-only">(opens in a new tab)</span>
-        </a>
-      </li>
-      {project.backendUrl ? (
-        <li>
-          <a href={project.backendUrl} target="_blank" rel="noopener noreferrer" className={pill}>
-            {project.backendLabel ?? "Backend"} <ArrowUpRight className="size-3.5 text-faint" />
+            Live demo <ArrowUpRight className="size-3.5 text-faint" />
             <span className="sr-only">(opens in a new tab)</span>
           </a>
         </li>
+        <li>
+          <a
+            href={project.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={pill}
+          >
+            GitHub <ArrowUpRight className="size-3.5 text-faint" />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+        </li>
+        {project.backendUrl ? (
+          <li>
+            <a
+              href={project.backendUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={pill}
+            >
+              {project.backendLabel ?? "Backend"}{" "}
+              <ArrowUpRight className="size-3.5 text-faint" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          </li>
+        ) : null}
+      </ul>
+      {note && project.demoNote ? (
+        <p className="max-w-[26rem] text-pretty text-[12px] leading-[1.5] text-muted">
+          {project.demoNote}
+        </p>
       ) : null}
-    </ul>
+    </div>
   );
 }

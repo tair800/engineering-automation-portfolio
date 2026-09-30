@@ -148,7 +148,7 @@ export const projects: Project[] = [
       { label: "Golden set", value: "250 records" },
       { label: "Chaos cells", value: "7 scenarios × 3 adapter configurations × 2 branches" },
       { label: "Decision record", value: "71 numbered ADRs, ADR-001 to ADR-071" },
-      { label: "Demo sign-in", value: "published demo tokens, by role" },
+      { label: "Demo sign-in", value: "one click, as a public analyst, operator or controller role" },
     ],
     stack: [
       "Python 3.12",
@@ -888,6 +888,7 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/counterparty-resolver",
     liveUrl: "https://counterparty-resolver.onrender.com",
+    demoNote: "Free-tier demo — after a quiet spell, the first load shows the host's wake-up screen for up to about a minute.",
   },
   {
     slug: "bordereaux-reconciler",
@@ -1068,6 +1069,7 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/bordereaux-reconciler",
     liveUrl: "https://bordereaux-reconciler.onrender.com",
+    demoNote: "Free-tier demo — after a quiet spell, the first load shows the host's wake-up screen for up to about a minute.",
   },
   {
     slug: "parts-answer-gate",
@@ -1276,6 +1278,7 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/parts-answer-gate",
     liveUrl: "https://parts-answer-gate.onrender.com",
+    demoNote: "Free-tier demo — after a quiet spell, the first load shows the host's wake-up screen for up to about a minute.",
   },
 ];
 

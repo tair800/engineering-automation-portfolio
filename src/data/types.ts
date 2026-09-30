@@ -215,6 +215,11 @@ export interface Project {
   shots: Shot[];
   githubUrl: string;
   liveUrl: string;
+  /**
+   * Shown beside the Live demo link, only where the demo itself cannot explain a slow first
+   * load — a server-rendered app whose host shows its own wake-up screen while it starts.
+   */
+  demoNote?: string;
   backendUrl?: string;
   backendLabel?: string;
 }

@@ -221,7 +221,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
             ))}
           </ul>
           <div className="mt-10">
-            <ProofLinks project={project} caseStudy={false} />
+            <ProofLinks project={project} caseStudy={false} note={false} />
           </div>
         </Block>
 

@@ -59,6 +59,13 @@ describe("projects", () => {
     }
   });
 
+  it("warn about a slow first load exactly where the host shows its own wake-up screen", () => {
+    for (const p of projects) {
+      const hostedOnRender = p.liveUrl.endsWith(".onrender.com");
+      expect(Boolean(p.demoNote), p.slug).toBe(hostedOnRender);
+    }
+  });
+
   it("carry the full card format and at least one headline measurement", () => {
     for (const p of projects) {
       expect(p.brief.problem && p.brief.built && p.brief.hardPart, p.slug).toBeTruthy();

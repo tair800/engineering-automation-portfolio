@@ -87,10 +87,6 @@ export function Hero() {
               ))}
             </ol>
           </div>
-          <p className="mt-3 px-1 text-[12px] leading-5 text-muted">
-            Every project runs on free-tier hosting; a demo that has been idle can take about a
-            minute to load.
-          </p>
         </nav>
       </div>
     </section>

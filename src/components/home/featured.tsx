@@ -1,100 +1,91 @@
 import Link from "next/link";
-import { flagships } from "@/data/projects";
+import { flagships, leadMetric } from "@/data/projects";
 import type { Project } from "@/data/types";
 import { pad } from "@/lib/format";
-import { Brief } from "../brief";
+import { Metric } from "../metric";
 import { ProofLinks } from "../proof-links";
 import { Section, SectionHeading } from "../section-heading";
-import { StatusBadge } from "../status-badge";
-import { EvidenceVisual } from "../visuals/evidence-visual";
-
-function PanelHeader({ project }: { project: Project }) {
-  return (
-    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3 sm:px-6">
-      <p className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
-        <span aria-hidden="true" className="size-2 rounded-[2px] bg-id" />
-        <span className="text-ink">{pad(project.index)}</span>
-        <span>{project.domain}</span>
-      </p>
-      <StatusBadge status={project.status} />
-    </header>
-  );
-}
-
-function Title({ project, id }: { project: Project; id: string }) {
-  return (
-    <>
-      <h3
-        id={id}
-        className="text-balance text-[24px] font-semibold leading-8 tracking-[-0.02em] text-ink sm:text-[26px]"
-      >
-        <Link href={`/projects/${project.slug}`} prefetch={false} className="hover:text-id">
-          {project.name}
-        </Link>
-      </h3>
-      <p className="mt-2 text-pretty text-[15px] leading-[1.6] text-muted">{project.tagline}</p>
-    </>
-  );
-}
 
 /**
- * The three flagships share a frame but not a layout: the ledger's chaos grid runs full width
- * like an operations dashboard, the broker keeps its console beside the argument, and the
- * reconciler puts its evidence first, the way a reconciliation workspace would.
+ * One flagship: the problem and what was built in a line each, the single figure that carries it,
+ * the skills it shows, and the three ways in. Architecture, the full evidence and the limitations
+ * are the case study's job, not the card's.
+ *
+ * On wide screens the three cards share their row tracks (subgrid), so their results sit on one
+ * line and can be read across like a single panel.
  */
-function FlagshipPanel({ project }: { project: Project }) {
+function FlagshipCard({ project }: { project: Project }) {
+  const brief = project.brief;
+  if (!brief) return null;
   const titleId = `${project.slug}-feature`;
-  const wide = project.identity === "ledger";
-  const evidenceFirst = project.identity === "bordereaux";
 
   return (
     <article
       data-identity={project.identity}
       aria-labelledby={titleId}
-      className="overflow-hidden rounded-[var(--radius)] border border-line bg-surface shadow-[var(--shadow)]"
+      className="relative flex flex-col overflow-hidden rounded-[var(--radius)] border border-line bg-surface shadow-[var(--shadow)] lg:row-span-5 lg:grid lg:grid-rows-subgrid lg:gap-0"
     >
-      <PanelHeader project={project} />
-      {wide ? (
-        <div className="flex flex-col gap-8 p-4 sm:p-6 lg:p-8">
-          <div className="grid gap-6 lg:grid-cols-12 lg:gap-10">
-            <div className="lg:col-span-4">
-              <Title project={project} id={titleId} />
-              <div className="mt-6">
-                <ProofLinks project={project} />
-              </div>
-            </div>
-            <Brief project={project} className="lg:col-span-8 lg:grid lg:grid-cols-3 lg:gap-8" />
-          </div>
-          <EvidenceVisual visual={project.visual} />
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-[3px] bg-id" />
+      <header className="px-5 pt-6 sm:px-6">
+        <p className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
+          <span aria-hidden="true" className="size-2 rounded-[2px] bg-id" />
+          <span className="text-id">{pad(project.index)}</span>
+          <span>{project.domain}</span>
+        </p>
+        <h3
+          id={titleId}
+          className="mt-3 text-balance text-[22px] font-semibold leading-7 tracking-[-0.02em] text-ink sm:text-[24px] sm:leading-8"
+        >
+          <Link href={`/projects/${project.slug}`} prefetch={false} className="hover:text-id">
+            {project.name}
+          </Link>
+        </h3>
+      </header>
+
+      <dl className="flex flex-col gap-3 px-5 pt-4 sm:px-6">
+        <div>
+          <dt className="label">Problem</dt>
+          <dd className="mt-1 text-pretty text-[14px] leading-[1.55] text-ink-2">{brief.problem}</dd>
         </div>
-      ) : (
-        <div className="grid gap-8 p-4 sm:p-6 lg:grid-cols-12 lg:gap-10 lg:p-8">
-          <div className={`flex flex-col lg:col-span-5 ${evidenceFirst ? "lg:order-2" : ""}`}>
-            <Title project={project} id={titleId} />
-            <Brief project={project} className="mt-6" />
-            <div className="mt-7">
-              <ProofLinks project={project} />
-            </div>
-          </div>
-          <div className={`min-w-0 lg:col-span-7 ${evidenceFirst ? "lg:order-1" : ""}`}>
-            <EvidenceVisual visual={project.visual} />
-          </div>
+        <div>
+          <dt className="label">Built</dt>
+          <dd className="mt-1 text-pretty text-[14px] leading-[1.55] text-ink-2">{brief.built}</dd>
         </div>
-      )}
+      </dl>
+
+      {/* A band in the project's own hue; across the aligned row the three read as one strip. */}
+      <div className="mt-5 border-y border-id/20 bg-id/5 px-5 py-4 sm:px-6">
+        <p className="label mb-1.5 text-id">Result</p>
+        <Metric metric={leadMetric(project)} size="xl" />
+      </div>
+
+      <div className="px-5 pt-4 sm:px-6">
+        <div className="overflow-hidden">
+          <ul className="dot-list font-mono text-[11px] leading-5 text-muted" aria-label={`${project.name} skills`}>
+            {brief.skills.map((skill) => (
+              <li key={skill}>{skill}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <div className="px-5 pb-5 pt-3 sm:px-6">
+        <ProofLinks project={project} backend={false} compact />
+      </div>
     </article>
   );
 }
 
 export function Featured() {
   return (
-    <Section id="featured" labelledBy="featured-title">
+    <Section id="projects" labelledBy="featured-title">
       <SectionHeading id="featured-title" label="Featured engineering" title="Where a wrong action costs money">
-        Finance operations, agent authorisation and insurance reconciliation, each shown beside
-        the experiment that could have proven it wrong.
+        Each states in advance the test that would prove it wrong, and publishes the result.
+        Architecture, full evidence and limitations are in each case study.
       </SectionHeading>
-      <div className="mt-12 flex flex-col gap-8">
+      <div className="mt-8 flex flex-col gap-5 lg:grid lg:grid-cols-3 lg:grid-rows-[repeat(5,auto)] lg:gap-x-5 lg:gap-y-0">
         {flagships.map((project) => (
-          <FlagshipPanel key={project.slug} project={project} />
+          <FlagshipCard key={project.slug} project={project} />
         ))}
       </div>
     </Section>

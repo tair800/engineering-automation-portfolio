@@ -28,15 +28,20 @@ export function ToneTag({ tone }: { tone?: Tone }) {
   );
 }
 
-export function Metric({ metric, size = "md" }: { metric: MetricData; size?: "md" | "lg" }) {
+const valueSize = {
+  md: "text-[24px] leading-8",
+  lg: "text-[30px] leading-9 sm:text-[34px]",
+  /** A flagship's one figure on the home page. */
+  xl: "text-[34px] leading-10 sm:text-[40px] sm:leading-[44px]",
+};
+
+export function Metric({ metric, size = "md" }: { metric: MetricData; size?: keyof typeof valueSize }) {
   const tone = metric.tone ?? "neutral";
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex items-baseline gap-2.5">
         <span
-          className={`num font-semibold tracking-[-0.02em] ${toneText[tone]} ${
-            size === "lg" ? "text-[30px] leading-9 sm:text-[34px]" : "text-[24px] leading-8"
-          }`}
+          className={`num font-semibold tracking-[-0.02em] ${toneText[tone]} ${valueSize[size]}`}
         >
           {metric.value}
         </span>

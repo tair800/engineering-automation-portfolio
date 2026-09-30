@@ -30,15 +30,19 @@ export interface Metric {
   /** A caveat that must travel with the number. */
   note?: string;
   tone?: Tone;
-  /** Shown in the portfolio-wide "Measured results" ledger. */
-  headline?: boolean;
+  /** The one figure the home page shows beside the project. Exactly one per project. */
+  lead?: boolean;
 }
 
-/** One sentence each, for the gallery card. The case study uses the long forms. */
+/**
+ * A flagship's card on the home page: one line each, and the skills a reader should see first.
+ * The case study uses the long forms.
+ */
 export interface Brief {
   problem: string;
   built: string;
-  hardPart: string;
+  /** At most five, each also listed in the project's `skills`. */
+  skills: string[];
 }
 
 export type StepKind =
@@ -203,7 +207,8 @@ export interface Project {
   problem: string;
   built: string;
   hardPart: string;
-  brief: Brief;
+  /** Flagships only: the home page's card copy. */
+  brief?: Brief;
   evidence: Metric[];
   visual: EvidenceVisual;
   flow: Flow;

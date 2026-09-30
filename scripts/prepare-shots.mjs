@@ -1,10 +1,11 @@
 // One-off: copy screenshots from the project repositories into public/shots as cropped WebP.
 //
 // Every image here was captured by the project itself and committed under its own
-// docs/screenshots directory. This script only crops (from the top) and re-encodes them; it never
-// edits the source files. Run from the repository root with the projects checked out beside it:
+// docs/screenshots directory. This script only crops and re-encodes them; it never edits the
+// source files. Run from the repository root with the projects checked out beside it, optionally
+// naming the shots to regenerate:
 //
-//   node scripts/prepare-shots.mjs ../projects
+//   node scripts/prepare-shots.mjs ../projects [slug/name ...]
 //
 // The output is committed, so the site does not depend on this script or on the source checkouts.
 
@@ -20,13 +21,18 @@ if (!root) {
 
 const MAX_WIDTH = 1600;
 
-/** [slug, output name, source path inside the project, crop height at source width or null] */
+/**
+ * [slug, output name, source path inside the project, crop], where crop is null, a height kept
+ * from the top, or { top, height } in source pixels.
+ */
 const MANIFEST = [
   ["ledger-exception-control-plane", "queue", "ledger-exception-control-plane/docs/screenshots/queue.png", null],
   ["ledger-exception-control-plane", "exception-detail", "ledger-exception-control-plane/docs/screenshots/exception-detail.png", 900],
   ["ledger-exception-control-plane", "fault-injection", "ledger-exception-control-plane/docs/screenshots/fault-injection.png", null],
   ["market-approach-desk", "board", "market-approach-desk/docs/screenshots/board.png", null],
-  ["market-approach-desk", "comparison", "market-approach-desk/docs/screenshots/comparison.png", null],
+  // The kill-test panel only. The screen's prose above it lists a "held by another broker" rule
+  // that the project's claim transaction does not implement, so it is left out rather than shown.
+  ["market-approach-desk", "comparison", "market-approach-desk/docs/screenshots/comparison.png", { top: 640, height: 760 }],
   ["callsite-impact", "result", "callsite-impact/docs/screenshots/result.png", 940],
   ["callsite-impact", "verdicts", "callsite-impact/docs/screenshots/verdicts.png", null],
   ["agent-authz-broker", "matrix", "agent-authz-broker/docs/screenshots/matrix.png", null],
@@ -50,12 +56,16 @@ const MANIFEST = [
   ["parts-answer-gate", "evidence", "parts-answer-gate/docs/screenshots/04-evidence.png", 1800],
 ];
 
-for (const [slug, name, source, cropHeight] of MANIFEST) {
+const only = new Set(process.argv.slice(3));
+
+for (const [slug, name, source, crop] of MANIFEST) {
+  if (only.size > 0 && !only.has(`${slug}/${name}`)) continue;
   const input = path.join(root, source);
   const image = sharp(input);
   const { width = 0, height = 0 } = await image.metadata();
-  const pipeline = cropHeight
-    ? image.extract({ left: 0, top: 0, width, height: Math.min(cropHeight, height) })
+  const box = typeof crop === "number" ? { top: 0, height: crop } : crop;
+  const pipeline = box
+    ? image.extract({ left: 0, top: box.top, width, height: Math.min(box.height, height - box.top) })
     : image;
   const directory = path.join("public", "shots", slug);
   await mkdir(directory, { recursive: true });

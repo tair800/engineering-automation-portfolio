@@ -12,10 +12,22 @@ projects. It measures nothing itself; every claim it makes belongs to a project 
 - Content lives only in `src/data/*.ts` (typed by `src/data/types.ts`). Components render it and
   hold no project copy of their own.
 - Evidence visuals (`src/components/visuals/*`) and architecture diagrams
-  (`src/components/flow-diagram.tsx`) are drawn from those records.
+  (`src/components/flow-diagram.tsx`) are drawn from those records, on the case-study pages.
 - Theme: an inline script sets `data-theme` on `<html>` before first paint; without script the
   `prefers-color-scheme` block in `globals.css` applies. Colours are tokens in `globals.css`.
 - Open Graph images are generated at build time with `next/og` from the same data.
+
+## The home page is for a reader with a minute
+
+It holds six things and nothing else: the hero (name, title, current role, one positioning line,
+the line that separates the role from the public projects, three short principles); the three
+flagships (problem and build in a line each, the one `lead` figure, at most five skills, Case
+study / Live demo / GitHub); the other projects in one row each (tagline, `lead` figure, links —
+a negative result keeps its status badge); four capability groups; the current role (a summary
+and at most three areas); contact. Architecture, the full evidence, evidence visuals and
+limitations belong on the case studies. Each figure appears once on the home page.
+
+"Production" describes only the professional role, never the public projects; no "agentic" claim.
 
 ## Commands
 

@@ -1,4 +1,4 @@
-import type { Project } from "./types";
+import type { Metric, Project } from "./types";
 
 /**
  * Every figure below is taken from the project's own README or committed artifacts, and each
@@ -27,18 +27,24 @@ export const projects: Project[] = [
       "A send whose outcome nobody knows: the ledger may have committed the posting and the response was lost. The system records it as UNKNOWN, never retries it on the assumption it failed, and follows the adapter's declared capability: a bounded re-send under the same operation id where the ledger enforces the key, reconciliation by query where it can be queried, otherwise an operator.",
     brief: {
       problem:
-        "Settlement files never fully match the ledger, and the costly failure is silent: an adjustment posted twice by a retry, found months later in reported revenue.",
+        "Settlement files never fully match the ledger, and a retry can silently post the same adjustment twice.",
       built:
-        "Deterministic matching, a model confined to a closed enum of treatment codes, role-separated approval, amounts computed in Decimal by code, and a transactional outbox with bounded retry, DLQ and recovery.",
-      hardPart:
-        "A send whose outcome is unknown is recorded as UNKNOWN and never retried blind: re-sent under the same operation id only where the ledger enforces the key, otherwise reconciled by query or handed to an operator.",
+        "Deterministic matching, a model limited to picking a treatment code, human approval, and a transactional outbox with bounded retry.",
+      skills: [
+        "Idempotency",
+        "Transactional outbox",
+        "Deterministic money",
+        "LLM integration",
+        "Evaluation vs baselines",
+      ],
     },
     evidence: [
       {
         value: "21 / 21",
         label: "failure-scenario runs (7 scenarios × 3 ledger configurations) in which no adjustment was applied twice, counted by the simulated ledger itself",
+        note: "Where the ledger enforces the key, the simulated ledger does the suppressing: those runs show the dispatcher behaving correctly given an enforcing ledger, not that any real ledger enforces anything.",
         tone: "pass",
-        headline: true,
+        lead: true,
       },
       {
         value: "5 of 7",
@@ -54,7 +60,6 @@ export const projects: Project[] = [
         label: "live model accuracy over 247 answered records; answering “escalate” every time would score 85.6%",
         note: "The model often proposed a treatment where escalation was correct. The account policy refuses all 177 such answers, and human approval stands in front of the one that would have priced. On the 36 priceable records it scored 97.2%.",
         tone: "fail",
-        headline: true,
       },
     ],
     visual: {
@@ -224,20 +229,12 @@ export const projects: Project[] = [
       "A 17-node n8n workflow and a typed Python service for the same approach workflow, a harness that forces two scheduler executions to overlap with a barrier rather than a sleep, a fake carrier receiver, and an operator console with a comparison screen. In the kill test the n8n arm runs through a node-by-node simulator of its exported workflow.",
     hardPart:
       "Measuring at the receiver rather than asking either arm what it did, then showing that SELECT … FOR UPDATE SKIP LOCKED — not only the cleared due_at — stops a second claim when two claim transactions overlap before either commits.",
-    brief: {
-      problem:
-        "Approaching the same carrier twice for one risk can cost the placement, and an email that reached an underwriter cannot be retracted.",
-      built:
-        "The same approach workflow in n8n and in typed Python, a harness that forces two executions to overlap, and a fake carrier that counts what arrived.",
-      hardPart:
-        "Showing that SKIP LOCKED, not just the cleared due_at, blocks a second concurrent claim, with a test verified to go red when the lock was removed.",
-    },
     evidence: [
       {
         value: "2 vs 1",
         label: "approaches the fake carrier counted under forced overlap: n8n arm vs Python arm",
         note: "The n8n arm runs through a node-by-node simulator of its exported workflow, not a live n8n instance. The duplicate comes from the workflow having no claim boundary across executions, not from n8n itself.",
-        headline: true,
+        lead: true,
       },
       {
         value: "1",
@@ -257,7 +254,7 @@ export const projects: Project[] = [
         {
           name: "Python arm",
           observed: 1,
-          detail: "one transaction claims with SKIP LOCKED and evaluates every eligibility rule inside it",
+          detail: "one transaction claims with SKIP LOCKED and checks placing authority and a 30-day decline cooling period inside it",
           tone: "pass",
         },
       ],
@@ -282,7 +279,7 @@ export const projects: Project[] = [
           title: "Python arm",
           steps: [
             { label: "Scheduler", kind: "input" },
-            { label: "Claim in one transaction", detail: "FOR UPDATE SKIP LOCKED + every eligibility rule", kind: "gate" },
+            { label: "Claim in one transaction", detail: "FOR UPDATE SKIP LOCKED + authority and decline-cooling checks", kind: "gate" },
             { label: "Commit", kind: "store" },
             { label: "Send", detail: "outside the claim transaction", kind: "effect" },
             { label: "Record outcome", kind: "store" },
@@ -302,7 +299,7 @@ export const projects: Project[] = [
       {
         heading: "What the Python arm does instead",
         paragraphs: [
-          "The claim and every eligibility rule run in one transaction with SELECT … FOR UPDATE SKIP LOCKED, so a concurrent scheduler skips a claimed row instead of blocking on it. The send is deliberately outside that transaction: holding it open across a network call would quietly turn two workers into one.",
+          "The claim and its conflict rules run in one transaction with SELECT … FOR UPDATE SKIP LOCKED, so a concurrent scheduler skips a claimed row instead of blocking on it. Two rules can refuse an approach: a carrier outside the broker's placing authority, and a carrier that declined this risk within the last 30 days. Both are implemented, though no test exercises either refusal, and nothing on the demo path classifies a reply as declined, so the cooling rule has had nothing to act on yet. A third, already approached, is kept in the code but cannot fire today, because the unique constraint on (placement, market, stage) already allows only one approach. The send is deliberately outside that transaction: holding it open across a network call would quietly turn two workers into one.",
           "Because the claim also clears due_at, the headline test alone cannot tell the lock from the column. A second test forces two claim transactions to overlap before either commits; it was verified by hand to go red with the lock removed.",
         ],
       },
@@ -361,9 +358,9 @@ export const projects: Project[] = [
       {
         src: "/shots/market-approach-desk/comparison.webp",
         width: 1600,
-        height: 788,
-        alt: "Comparison screen showing two approaches observed for the n8n arm and one for the Python arm",
-        caption: "The comparison screen, rendered from the committed kill-test result of 2026-09-11.",
+        height: 422,
+        alt: "Kill-test panel of the comparison screen: the n8n arm observed two approaches with one duplicate, the Python arm one approach and no duplicate",
+        caption: "The comparison screen's kill-test panel, rendered from the committed result of 2026-09-11: two approaches reached the fake carrier from the n8n arm, one from the Python arm. The Python arm's one-line summary on it refers to the two conflict rules described in the notes above.",
         source: "live",
       },
     ],
@@ -391,28 +388,19 @@ export const projects: Project[] = [
       "A pipeline that generates call sites from revision A, keeps only those that compile, lets the TypeScript compiler label what breaks under revision B, and predicts those breakages from the oasdiff change set and a parsed view of the source — never from compiler output.",
     hardPart:
       "Keeping the author out of the answer key: the generator never sees revision B or the diff, a failing call site is discarded rather than repaired, and a guard fails the build if the classifier imports the oracle.",
-    brief: {
-      problem:
-        "A spec differ can list hundreds of breaking changes between API versions but cannot say which of your call sites actually break.",
-      built:
-        "Call sites generated from revision A, labelled by the TypeScript compiler against revision B, and predicted from the change set and parsed source — never from compiler output.",
-      hardPart:
-        "Keeping the author out of the answer key, then publishing a held-out F1 of 0.328 beside a development F1 of 0.963.",
-    },
     evidence: [
       {
         value: "0.963 → 0.328",
         label: "F1 score on the development corpus vs a slice held out and frozen before scoring; on unseen APIs it misses four breakages in five",
         note: "The development F1 is a post-selection number; the held-out one is the unbiased estimate.",
         tone: "fail",
-        headline: true,
+        lead: true,
       },
       {
         value: "1.000",
         label: "held-out precision: zero false positives across 1,077 clean call sites",
         note: "At a held-out recall of 0.196.",
         tone: "pass",
-        headline: true,
       },
       {
         value: "94",
@@ -551,18 +539,17 @@ export const projects: Project[] = [
       "Proving each control is load-bearing: every one was removed in turn and the suite went red. Later reviews found holes no test covered — an unauthenticated approval endpoint and refusals at the transport that left no audit row — and both were fixed and published.",
     brief: {
       problem:
-        "A validly signed agent token is not authorisation: it may be meant for another service, over-claim its scope, or request an irreversible action nobody approved.",
+        "A validly signed agent token can still be meant for another service, over-claim its scope, or request an irreversible action nobody approved.",
       built:
-        "An MCP resource server that checks audience, intersects scope down the delegation chain, and lets each approval authorise at most one effect, enforced in PostgreSQL.",
-      hardPart:
-        "Showing every control is load-bearing — each was removed in turn and the suite went red — and publishing the holes later reviews found.",
+        "An MCP resource server that checks audience, intersects scope down the delegation chain, and lets each approval authorise at most one effect.",
+      skills: ["MCP", "AI agent security", "JWT / JWKS", "Approval gating", "Concurrency control"],
     },
     evidence: [
       {
         value: "0 of 5",
         label: "attacks that got past the hardened server; a naive verifier that takes the token's own scope claim at its word let 2 of 5 through",
         tone: "pass",
-        headline: true,
+        lead: true,
       },
       {
         value: "4 → 2",
@@ -572,7 +559,6 @@ export const projects: Project[] = [
         value: "12 / 12",
         label: "security controls removed one at a time, every removal caught by the tests — replayed in CI",
         tone: "pass",
-        headline: true,
       },
       {
         value: "12",
@@ -681,7 +667,7 @@ export const projects: Project[] = [
     facts: [
       { label: "MCP protocol", value: "2025-11-25, Streamable HTTP" },
       { label: "Tokens", value: "Ed25519, verified against a JWKS" },
-      { label: "Tests", value: "59 Python tests · six CI jobs" },
+      { label: "Tests", value: "Offline and real-PostgreSQL suites · six CI jobs" },
       { label: "Rate limit", value: "per subject and tool, counted in PostgreSQL" },
     ],
     stack: [
@@ -761,21 +747,13 @@ export const projects: Project[] = [
       "A resolution layer over fixed legacy schemas that may not change: deterministic blocking, ordered rules that decide MATCH, REVIEW or NO_MATCH, human approval of every merge, and an append-only merge ledger that reverses to the byte — evaluated on registrar duplicate adjudications from the public GLEIF dataset, the only data the corpus and the live demo hold.",
     hardPart:
       "Brownfield constraints: the source schemas may not change, so everything is additive — including an expand, backfill and contract migration that refuses to drop a column while any row would lose its approver.",
-    brief: {
-      problem:
-        "A wrong merge corrupts payment routing; a missed duplicate costs a duplicate. The positive labels here are registrar adjudications, not the author's.",
-      built:
-        "Blocking, ordered deterministic rules, human-approved merges and a reversible append-only merge ledger, evaluated on registrar adjudications from GLEIF.",
-      hardPart:
-        "The legacy schemas may not change, so every change is additive — including a migration that refuses to drop a column while any row would lose its approver.",
-    },
     evidence: [
       {
         value: "0.9980",
-        label: "precision over 10,532 development pairs — six false merges, against seven for the best baseline",
+        label: "precision over 10,532 development pairs — six false merges, against seven for the best baseline; on F1 the nine-line identifier_first baseline still wins, 0.7607 to 0.7303",
         note: "Held out: 0.9986 with one false merge, or 0.9972 with development-only priors. The project quotes the development figure: the hold-out's negatives are easier, so its absolute precision is not comparable.",
         tone: "pass",
-        headline: true,
+        lead: true,
       },
       {
         value: "< 0.005",
@@ -913,23 +891,21 @@ export const projects: Project[] = [
       problem:
         "Coverholders send bordereaux with no standard headers or number formats, and the reconciliation errors that matter do not look wrong.",
       built:
-        "Column mapping from headers and value shapes, exact Decimal canonicalisation with the source cell on every value, six reconciliation statuses, and a human-confirmation step for mappings.",
-      hardPart:
-        "Mapping headers nobody wrote down by profiling what each column contains, so the mapping holds where header-string matching collapses.",
+        "Column mapping from headers and value shapes, exact decimal money with the source cell on every value, and six reconciliation statuses.",
+      skills: ["Insurance reconciliation", "Deterministic money", "Data lineage", "Human-confirmed mapping"],
     },
     evidence: [
       {
         value: "0",
         label: "rows wrongly marked MATCHED in a frozen hold-out of 715 rows seeded with 90 discrepancies",
         tone: "pass",
-        headline: true,
+        lead: true,
       },
       {
         value: "0.913",
         label: "column-mapping accuracy on the hold-out files; the best of four header-matching baselines reaches 0.652",
         note: "Hold-out numbers were visible in debug output before scoring, so the project treats this figure as slightly weaker; the development figure is also 0.913.",
         tone: "pass",
-        headline: true,
       },
       {
         value: "13,718",
@@ -1094,26 +1070,18 @@ export const projects: Project[] = [
       "Hybrid BM25 and pgvector retrieval with variant, serial, validity and knowledge-time predicates in the SQL WHERE clause of both ranking queries; a gate of seven deterministic signals that answers, abstains or sends to review; extractive answers with verbatim citations at character offsets; in English, Turkish and Russian.",
     hardPart:
       "Bitemporality. For example, a correction issued in 2025 about a 2021 procedure is valid in 2021 and known from 2025. Asked what the technician had in front of them at the time, the system returns the belief a later correction replaced — without rewriting it.",
-    brief: {
-      problem:
-        "A technician needs the procedure in force for their exact variant and serial on a given date; unfiltered retrieval can cite a superseded revision, and filtering after ranking silently loses recall.",
-      built:
-        "Hybrid BM25 and pgvector retrieval with effectivity filtered in SQL before ranking, a deterministic answer gate, and extractive answers with verbatim citations.",
-      hardPart:
-        "Answering with what was known at the time without rewriting it — and publishing the four pre-registered kill conditions that failed.",
-    },
     evidence: [
       {
         value: "4 of 12",
         label: "release criteria, fixed before any source file existed, that failed — E, F, I and K; none was lowered, removed or disabled afterwards",
+        note: "A fifth, G, passes near-vacuously: for 297 of 312 hold-out questions the effectivity filter leaves the gate nothing to catch.",
         tone: "fail",
-        headline: true,
+        lead: true,
       },
       {
         value: "0",
         label: "superseded passages returned across 600 date-specific queries (120 questions at 5 dates)",
         tone: "pass",
-        headline: true,
       },
       {
         value: "0 / 3,669",
@@ -1283,6 +1251,13 @@ export const projects: Project[] = [
 ];
 
 export const flagships = projects.filter((project) => project.flagship);
+
+/** The one figure the home page shows beside a project. */
+export function leadMetric(project: Project): Metric {
+  const lead = project.evidence.find((metric) => metric.lead);
+  if (!lead) throw new Error(`${project.slug} marks no lead metric`);
+  return lead;
+}
 
 export function getProject(slug: string): Project | undefined {
   return projects.find((project) => project.slug === slug);

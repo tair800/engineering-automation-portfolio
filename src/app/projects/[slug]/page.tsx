@@ -70,6 +70,14 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
     ["Hard part", project.hardPart],
   ];
 
+  // The plain-English view first, for a reader who is not an engineer; the technical account follows.
+  const inShort: [string, string][] = [
+    ["What it does", project.plain.does],
+    ["Why it matters", project.plain.matters],
+    ["What I built", project.plain.built],
+    ["Key result", project.plain.result],
+  ];
+
   return (
     <article data-identity={project.identity}>
       <header className="relative overflow-hidden border-b border-line">
@@ -78,7 +86,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
         <div className="container-page relative pb-12 pt-8 sm:pb-14 sm:pt-10">
           <nav aria-label="Breadcrumb">
             <Link
-              href="/#projects"
+              href="/#work"
               className="inline-flex items-center gap-1.5 text-[13px] text-muted hover:text-ink"
             >
               <ArrowLeft className="size-3.5" /> All projects
@@ -92,9 +100,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
           <h1 className="mt-4 max-w-[52rem] text-balance text-[36px] font-semibold leading-[1.08] tracking-[-0.03em] text-ink sm:text-[48px]">
             {project.name}
           </h1>
-          <p className="mt-4 max-w-[44rem] text-pretty text-[17px] leading-[1.6] text-ink-2 sm:text-[18px]">
-            {project.tagline}
-          </p>
+          {/* The plain-English summary ("In short") follows the header, so no technical line sits above it. */}
           <div className="mt-6">
             <StatusBadge status={project.status} />
           </div>
@@ -105,6 +111,17 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
       </header>
 
       <div className="container-page pb-8">
+        <Block id="in-short" label="In short">
+          <dl className="grid max-w-[52rem] gap-6 sm:grid-cols-2 sm:gap-x-10">
+            {inShort.map(([term, text]) => (
+              <div key={term}>
+                <dt className="text-[13px] font-medium text-muted">{term}</dt>
+                <dd className="mt-1.5 text-pretty text-[16px] leading-[1.6] text-ink">{text}</dd>
+              </div>
+            ))}
+          </dl>
+        </Block>
+
         <Block id="overview" label="Overview">
           <p className="max-w-[40rem] text-pretty text-[17px] leading-[1.65] text-ink">{project.summary}</p>
           <dl className="mt-8 grid gap-6 md:grid-cols-3 md:gap-8">
@@ -256,7 +273,7 @@ export default async function ProjectPage(props: PageProps<"/projects/[slug]">) 
             </Link>
           ) : (
             <Link
-              href="/#projects"
+              href="/#work"
               className="group flex flex-col items-end gap-1 bg-surface p-5 text-right hover:bg-surface-2"
             >
               <span className="label inline-flex items-center gap-1.5">

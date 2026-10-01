@@ -242,28 +242,6 @@
     );
   }
 
-  /* Items separated by a middle dot that never starts a wrapped line: each dot sits in its item's
-     left padding, and the list is shifted left into a clipping parent so the first item of every
-     line loses its dot. The dot has empty alternative text, so screen readers skip it. */
-  .dot-list {
-    display: flex;
-    flex-wrap: wrap;
-    margin-left: -1rem;
-  }
-
-  .dot-list > li {
-    position: relative;
-    padding-left: 1rem;
-  }
-
-  .dot-list > li::before {
-    content: "·";
-    content: "·" / "";
-    position: absolute;
-    left: 0.38rem;
-    color: var(--faint);
-  }
-
   .link-underline {
     text-decoration-line: underline;
     text-decoration-thickness: 1px;

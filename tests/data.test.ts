@@ -1,16 +1,16 @@
 /**
  * Guards on the content itself. The site's claims are copied from each project's committed
  * evidence by hand, so these tests cannot prove a number right; they catch the ways the copy
- * drifts: a broken reference, a missing screenshot, a wording the projects themselves rule out.
+ * drifts: a broken reference, a missing screenshot, a wording the projects themselves rule out,
+ * and — for the plain-English home page — jargon, or a simplification that drops a caveat.
  */
 import { existsSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
-import { capabilityGroups } from "@/data/capabilities";
-import { principles } from "@/data/principles";
 import { profile } from "@/data/profile";
 import { getProject, leadMetric, projects } from "@/data/projects";
+import { coreTechnologies } from "@/data/skills";
 
 const slugs = projects.map((p) => p.slug);
 
@@ -26,10 +26,29 @@ function strings(value: unknown, at = "$"): [string, string][] {
 
 const copy = [
   ...strings(projects, "projects"),
-  ...strings(capabilityGroups, "capabilities"),
-  ...strings(principles, "principles"),
+  ...strings(coreTechnologies, "skills"),
   ...strings(profile, "profile"),
 ];
+
+/** Words a recruiter should not have to decode. They belong in the case studies' technical parts. */
+const JARGON =
+  /idempoten|bitemporal|pgvector|hold-?out|effectively[- ]once|exactly[- ]once|skip locked|\bF1\b|\brecall\b|kill condition|vacuous|outbox|\bDLQ\b|\benum\b|JWKS|attenuat|canonical|lineage|\bMCP\b|deterministic|heuristic/i;
+
+/** The plain-English sentences: the home page and the top of each case study. */
+const plainCopy: [string, string][] = [
+  ["profile.headline", profile.headline],
+  ["profile.worksWith", profile.worksWith],
+  ["profile.independence", profile.independence],
+  ...projects.flatMap((p): [string, string][] => [
+    [`${p.slug}.does`, p.plain.does],
+    [`${p.slug}.matters`, p.plain.matters],
+    [`${p.slug}.built`, p.plain.built],
+    ...(p.plain.figure ? [[`${p.slug}.figure`, p.plain.figure.label] as [string, string]] : []),
+    ...(p.plain.caveat ? [[`${p.slug}.caveat`, p.plain.caveat] as [string, string]] : []),
+  ]),
+];
+
+const RENDER_NOTE = "Free demo — may take ~1 min to wake.";
 
 describe("projects", () => {
   it("are the seven published projects, in order, with unique slugs", () => {
@@ -59,45 +78,64 @@ describe("projects", () => {
     }
   });
 
-  it("warn about a slow first load exactly where the host shows its own wake-up screen", () => {
+  it("carry one short wake-up note, exactly where the host shows its own wake-up screen", () => {
     for (const p of projects) {
-      const hostedOnRender = p.liveUrl.endsWith(".onrender.com");
-      expect(Boolean(p.demoNote), p.slug).toBe(hostedOnRender);
+      expect(p.demoNote, p.slug).toBe(p.liveUrl.endsWith(".onrender.com") ? RENDER_NOTE : undefined);
     }
   });
 
   it("carry their evidence, limitations and screenshots", () => {
     for (const p of projects) {
       expect(p.evidence.length, p.slug).toBeGreaterThanOrEqual(2);
+      expect(p.evidence.filter((m) => m.lead), p.slug).toHaveLength(1);
       expect(p.limitations.length, p.slug).toBeGreaterThanOrEqual(3);
       expect(p.shots.length, p.slug).toBeGreaterThanOrEqual(1);
     }
   });
+});
 
-  it("mark exactly one figure each for the home page", () => {
+describe("the plain-English view", () => {
+  it("says what each project does, why it matters, what was built and what it showed", () => {
     for (const p of projects) {
-      expect(p.evidence.filter((m) => m.lead), p.slug).toHaveLength(1);
-      expect(p.evidence).toContain(leadMetric(p));
-    }
-  });
-
-  it("keep Parts Answer Gate's lead figure the failed release gate", () => {
-    const parts = getProject("parts-answer-gate");
-    expect(parts && leadMetric(parts)).toMatchObject({ value: "4 of 12", tone: "fail" });
-  });
-
-  it("give each flagship a one-line card with at most five of its own skills", () => {
-    for (const p of projects) {
-      expect(Boolean(p.brief), p.slug).toBe(p.flagship);
-      if (!p.brief) continue;
-      for (const line of [p.brief.problem, p.brief.built]) {
-        expect(line.length, `${p.slug}: ${line}`).toBeLessThanOrEqual(150);
-        expect(line.split(/[.;]\s/).length, `${p.slug}: one sentence`).toBe(1);
+      for (const [field, text] of Object.entries({ does: p.plain.does, matters: p.plain.matters, built: p.plain.built })) {
+        expect(text.length, `${p.slug}.${field}`).toBeLessThanOrEqual(170);
+        expect(text.split(/[.;]\s/).length, `${p.slug}.${field}: one sentence`).toBe(1);
       }
-      expect(p.brief.skills.length, p.slug).toBeGreaterThanOrEqual(3);
-      expect(p.brief.skills.length, p.slug).toBeLessThanOrEqual(5);
-      for (const skill of p.brief.skills) expect(p.skills, p.slug).toContain(skill);
+      expect(p.plain.built, p.slug).toMatch(/^Built /);
+      expect(p.plain.result.length, p.slug).toBeLessThanOrEqual(260);
     }
+  });
+
+  it("gives each flagship one figure, the same one its evidence leads with", () => {
+    const squash = (value: string) => value.replace(/\s+/g, "");
+    for (const p of projects) {
+      expect(Boolean(p.plain.figure), p.slug).toBe(p.flagship);
+      if (!p.plain.figure) continue;
+      expect(squash(p.plain.figure.value), p.slug).toBe(squash(leadMetric(p).value));
+      expect(p.plain.figure.label.length, p.slug).toBeLessThanOrEqual(110);
+    }
+  });
+
+  it("names at most four technologies per project, each from its own stack", () => {
+    for (const p of projects) {
+      expect(p.plain.tech.length, p.slug).toBeGreaterThanOrEqual(2);
+      expect(p.plain.tech.length, p.slug).toBeLessThanOrEqual(4);
+      for (const tech of p.plain.tech) {
+        const listed = p.stack.some((item) => item.toLowerCase().startsWith(tech.toLowerCase()));
+        expect(listed, `${p.slug}: ${tech}`).toBe(true);
+      }
+    }
+  });
+
+  it("carries a negative result to the home page as a plain caveat", () => {
+    for (const p of projects) {
+      if (leadMetric(p).tone === "fail") expect(p.plain.caveat, p.slug).toBeTruthy();
+    }
+    expect(getProject("parts-answer-gate")?.plain.caveat).toMatch(/closed/i);
+  });
+
+  it("uses no engineering jargon", () => {
+    for (const [at, text] of plainCopy) expect(text, at).not.toMatch(JARGON);
   });
 });
 
@@ -118,32 +156,12 @@ describe("screenshots", () => {
   });
 });
 
-describe("home page", () => {
-  it("states at most three principles, one short line each", () => {
-    expect(principles.length).toBeLessThanOrEqual(3);
-    for (const principle of principles) expect(principle.detail.length, principle.title).toBeLessThanOrEqual(110);
-  });
-
-  it("groups skills into at most four compact groups", () => {
-    expect(capabilityGroups.length).toBeLessThanOrEqual(4);
-    for (const group of capabilityGroups) expect(group.items.length, group.title).toBeLessThanOrEqual(5);
-  });
-
-  it("keeps the current role to a summary and three areas", () => {
-    for (const role of profile.experience) expect(role.areas.length, role.title).toBeLessThanOrEqual(3);
-  });
-});
-
-describe("cross-references", () => {
-  it("point every capability at a real project", () => {
-    for (const slug of capabilityGroups.flatMap((g) => g.items.flatMap((i) => i.projects))) {
-      expect(slugs, slug).toContain(slug);
-    }
-  });
-
-  it("give every capability some evidence", () => {
-    for (const item of capabilityGroups.flatMap((g) => g.items)) {
-      expect(item.projects.length > 0 || item.role === true, item.name).toBe(true);
+describe("core technologies", () => {
+  it("are a short list of names, each with evidence", () => {
+    expect(coreTechnologies.length).toBeLessThanOrEqual(14);
+    for (const technology of coreTechnologies) {
+      expect(technology.projects.length > 0 || technology.role === true, technology.name).toBe(true);
+      for (const slug of technology.projects) expect(slugs, `${technology.name}: ${slug}`).toContain(slug);
     }
   });
 });
@@ -163,14 +181,8 @@ describe("wording", () => {
     }
   });
 
-  it("keeps 'production' to the professional role, and claims no agentic systems", () => {
-    const aboutTheProjects = [
-      ...strings(projects, "projects"),
-      ...strings(capabilityGroups, "capabilities"),
-      ...strings(principles, "principles"),
-      ["profile.headline", profile.headline] as [string, string],
-    ];
-    for (const [at, text] of aboutTheProjects) {
+  it("never calls the public projects production work, and claims no agentic systems", () => {
+    for (const [at, text] of [...strings(projects, "projects"), ...plainCopy]) {
       expect(text, at).not.toMatch(/(?<!non-)\bproduction\b/i);
       expect(text, at).not.toMatch(/\bagentic\b/i);
     }
@@ -179,12 +191,6 @@ describe("wording", () => {
   it("never implies the Azure infrastructure was deployed", () => {
     for (const [at, text] of copy) {
       if (/azure/i.test(text)) expect(text, at).toMatch(/never applied|not applied|nothing has been applied|validate/i);
-    }
-  });
-
-  it("never lists Terraform without saying it was not applied", () => {
-    for (const item of capabilityGroups.flatMap((g) => g.items)) {
-      if (/terraform/i.test(item.name)) expect(item.detail, item.name).toMatch(/not applied/i);
     }
   });
 

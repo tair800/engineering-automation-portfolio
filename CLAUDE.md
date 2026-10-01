@@ -17,17 +17,22 @@ projects. It measures nothing itself; every claim it makes belongs to a project 
   `prefers-color-scheme` block in `globals.css` applies. Colours are tokens in `globals.css`.
 - Open Graph images are generated at build time with `next/og` from the same data.
 
-## The home page is for a reader with a minute
+## The home page is for a recruiter with half a minute
 
-It holds six things and nothing else: the hero (name, title, current role, one positioning line,
-the line that separates the role from the public projects, three short principles); the three
-flagships (problem and build in a line each, the one `lead` figure, at most five skills, Case
-study / Live demo / GitHub); the other projects in one row each (tagline, `lead` figure, links —
-a negative result keeps its status badge); four capability groups; the current role (a summary
-and at most three areas); contact. Architecture, the full evidence, evidence visuals and
-limitations belong on the case studies. Each figure appears once on the home page.
+Plain English first, technical detail second. The home page holds five things: the hero (name,
+title, one sentence on what Tahir builds, the current employer, what he works with, three links);
+Selected work (the three flagships — what it does, what was built, one figure with a plain label,
+at most four technologies, Case study / Live demo / GitHub); More projects (a line each, with a
+plain caveat where a result is negative); Experience (the current role in a sentence and the core
+technologies as plain names); Contact. No eyebrow labels, badges, chips, tinted panels or metric
+grids: one figure per flagship and none on the other projects.
 
-"Production" describes only the professional role, never the public projects; no "agentic" claim.
+All of it comes from each project's `plain` record in `projects.ts`, which also opens the case
+study ("In short"); the technical account follows it unchanged. A fact appears once: the
+independence of the projects is stated only above Selected work, and a free-tier note only beside
+the Live demo link it concerns. Simplifying keeps the meaning — no guarantee stated more strongly,
+no negative result softened. "Production" describes only the professional role, never the public
+projects; no "agentic" claim.
 
 ## Commands
 
@@ -48,8 +53,8 @@ Before every commit: lint, typecheck, test and build must pass.
    or artifacts — and keeps the qualification the project attaches to it. Never round up, never
    re-label, never measure anything here.
 2. **Negative results stay visible.** Parts Answer Gate's status is exactly "Closed —
-   pre-registered negative result" with "Deployed / live"; its failed kill conditions stay on
-   the page.
+   pre-registered negative result" with "Deployed / live" on its case study, which keeps its
+   failed kill conditions; the home page states the closure in plain English beside the project.
 3. **Only finished projects appear.** A project is added when its own repository records it as
    complete.
 4. **No exactly-once claim** anywhere; at-most-once effects are stated with their conditions.

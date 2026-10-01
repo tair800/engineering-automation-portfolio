@@ -1,27 +1,28 @@
 export interface Role {
   title: string;
   organisation: string;
-  /** The employer as the hero names it, in one line. */
+  /** The employer as the hero names it. */
   employer: string;
   period: string;
   /** ISO month the role started, for machine-readable dates. */
   start: string;
+  /** One sentence, in the role's public terms. */
   summary: string;
-  /** At most three. */
-  areas: string[];
-  note: string;
 }
 
 export const profile = {
   name: "Tahir Aslanli",
   role: "AI Automation Engineer",
-  headline: "Building AI-enabled automation, retrieval systems and reliable backend workflows.",
+  headline:
+    "I build AI-enabled automation and backend systems that turn manual business processes into reliable software.",
+  /** The hero's one line of keywords; the full list is under Experience. */
+  worksWith: "Works with Python, APIs and databases, LLM and RAG integrations, and workflow automation.",
   /**
-   * Keeps the professional role and the public projects apart: the projects are independent
-   * work, and nothing on the site may read as the employer's.
+   * Said once, above the selected work: the public projects are independent work, and nothing on
+   * the site may read as the employer's.
    */
   independence:
-    "At PASHA Insurance I work on production automation and AI integration for internal systems. The seven projects below are independent public work, built on synthetic or public data and separate from that role.",
+    "Independent projects, built on public or sample data and separate from my work at PASHA Insurance. Each is tested against a simpler alternative, and its limits are published.",
   githubUrl: "https://github.com/tair800",
   linkedinUrl: "https://www.linkedin.com/in/tahir-aslanli-075b4924b",
   experience: [
@@ -29,16 +30,9 @@ export const profile = {
       title: "AI Automation Engineer",
       organisation: "PASHA Insurance OJSC",
       employer: "PASHA Insurance",
-      period: "Jan 2026 — Present",
+      period: "January 2026 — present",
       start: "2026-01",
-      summary:
-        "Building end-to-end automation and AI integration layers on top of internal insurance systems, in production on Windows and Linux.",
-      areas: [
-        "Automation workflows and REST API integrations with n8n, and AI-driven data pipelines in Dataiku",
-        "AI and LLM services: RAG, vector databases and MCP",
-        "C# / .NET REST APIs, MS SQL and PostgreSQL, with QA and automated testing",
-      ],
-      note: "Internal systems, data and architecture are confidential and are not described on this site.",
+      summary: "Building AI-enabled automation and integrations for internal insurance systems.",
     },
   ] satisfies Role[],
 };

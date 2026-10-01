@@ -44,19 +44,20 @@ All copy and every figure live in typed data files, and the pages are derived fr
 
 ```
 src/data/types.ts         the shape of a project record and of each evidence visual
-src/data/projects.ts      the seven projects: problem, built, hard part, evidence (one figure each
-                          marked as the home page's lead), architecture, case-study notes,
-                          limitations, stack, screenshots and links; flagships add a one-line card
-src/data/capabilities.ts  four skill groups, each skill mapped to the projects (or the role)
-                          that demonstrate it
-src/data/principles.ts    the three principles the home page states
+src/data/projects.ts      the seven projects: a plain-English summary (what it does, why it
+                          matters, what was built, the key result, a few technologies), then the
+                          technical record — problem, built, hard part, evidence, architecture,
+                          case-study notes, limitations, stack, screenshots and links
+src/data/skills.ts        the core technologies, each mapped to the projects (or the role) that
+                          use it
 src/data/profile.ts       name, role, experience and contact links
 ```
 
-The home page (`src/app/page.tsx`, from `src/components/home/*`) is deliberately short, for a
-reader with a minute: a hero, the three flagships with one figure each, the other four projects in
-a line each, skills, the current role and contact. Everything deeper is on the case-study pages
-that `src/app/projects/[slug]/page.tsx` renders from the same records: the full evidence, a bespoke
+There are two audiences. The home page (`src/app/page.tsx`, from `src/components/home/*`) is
+written for a recruiter with half a minute, in plain English: who Tahir is, three selected
+projects with one result each, the other four in a line each, the current role with its core
+technologies, and contact. The case-study pages (`src/app/projects/[slug]/page.tsx`) are for a
+technical reader: each opens with the same plain-English summary, then the full evidence, a bespoke
 evidence visual (`src/components/visuals/*`) drawn from the project's own committed results — the
 chaos-suite grid, the attack matrix, the mapping-accuracy bars, the kill-condition grid — an
 architecture diagram (`src/components/flow-diagram.tsx`) built from that project's actual
@@ -74,11 +75,13 @@ Adding a project is one entry in `projects.ts` plus its screenshots.
   is referenced.
 
 `tests/data.test.ts` enforces what can be checked mechanically: screenshot files exist at their
-declared sizes, every cross-reference resolves, exactly the seven published projects appear, each
-marks exactly one home-page figure, flagship cards stay one line and cite only their own skills,
-and wordings the projects themselves rule out — an exactly-once claim, an Azure deployment, a
-conflict rule a project does not implement, "production" applied to the public projects, a data
-source the entity-resolution corpus did not use — never appear.
+declared sizes, every cross-reference resolves, exactly the seven published projects appear, the
+plain-English sentences stay one sentence each and free of engineering jargon, each flagship's
+figure is the one its evidence leads with, technologies come from the project's own stack, a
+negative result carries a plain caveat to the home page, and wordings the projects themselves
+rule out — an exactly-once claim, an Azure deployment, a conflict rule a project does not
+implement, "production" applied to the public projects, a data source the entity-resolution
+corpus did not use — never appear.
 
 ## Screenshots
 

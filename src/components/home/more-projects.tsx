@@ -1,58 +1,44 @@
 import Link from "next/link";
-import { leadMetric, projects } from "@/data/projects";
+import { projects } from "@/data/projects";
 import type { Project } from "@/data/types";
-import { pad } from "@/lib/format";
-import { Metric } from "../metric";
 import { ProofLinks } from "../proof-links";
 import { Section, SectionHeading } from "../section-heading";
-import { StatusBadge } from "../status-badge";
 
 /**
- * One line per project: what it is, the one figure that carries it, and the ways in. A negative
- * result carries its status badge directly under the name, so it cannot be read as a success.
+ * One line per project: what it does, and the caveat a reader must not miss — Parts Answer Gate's
+ * negative result in particular — next to the project it belongs to.
  */
 function ProjectRow({ project }: { project: Project }) {
-  const titleId = `${project.slug}-row`;
-  const negative = project.status.kind === "negative-result";
+  const { plain } = project;
   return (
-    <li data-identity={project.identity} className="border-b border-line">
-      <article aria-labelledby={titleId} className="grid gap-4 py-6 lg:grid-cols-12 lg:gap-8">
-        <div className="flex flex-col gap-2 lg:col-span-4">
-          <p className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-muted">
-            <span aria-hidden="true" className="h-3 w-[3px] rounded-full bg-id" />
-            <span className="text-ink">{pad(project.index)}</span>
-            <span>{project.domain}</span>
-          </p>
-          <h3 id={titleId} className="text-balance text-[19px] font-semibold leading-7 tracking-[-0.015em] text-ink">
-            <Link href={`/projects/${project.slug}`} prefetch={false} className="hover:text-id">
-              {project.name}
-            </Link>
-          </h3>
-          {negative ? <StatusBadge status={project.status} /> : null}
-          <p className="text-pretty text-[14px] leading-[1.6] text-ink-2">{project.tagline}</p>
-        </div>
-        <div className="lg:col-span-5">
-          <Metric metric={leadMetric(project)} />
-        </div>
-        <div className="lg:col-span-3">
-          <ProofLinks project={project} backend={false} compact />
-        </div>
-      </article>
+    <li className="grid gap-2 py-5 lg:grid-cols-12 lg:items-baseline lg:gap-8">
+      <h3 className="text-[17px] font-semibold leading-6 tracking-[-0.01em] text-ink lg:col-span-3">
+        <Link href={`/projects/${project.slug}`} prefetch={false} className="hover:underline hover:decoration-line-strong hover:underline-offset-4">
+          {project.name}
+        </Link>
+      </h3>
+      <div className="lg:col-span-6">
+        <p className="text-pretty text-[15px] leading-[1.6] text-ink-2">{plain.does}</p>
+        {/* Calm, not alarm-red: a negative result reported plainly is a finding, not an error. */}
+        {plain.caveat ? <p className="mt-1 text-pretty text-[14px] leading-[1.55] text-muted">{plain.caveat}</p> : null}
+      </div>
+      <div className="lg:col-span-3">
+        <ProofLinks project={project} backend={false} github={false} compact />
+      </div>
     </li>
   );
 }
 
 export function MoreProjects() {
-  const others = projects.filter((project) => !project.flagship);
   return (
-    <Section id="more-projects" labelledBy="more-projects-title">
-      <SectionHeading id="more-projects-title" label="More projects" title="Four more public systems">
-        Each is its own repository, with its own tests, CI and live deployment.
-      </SectionHeading>
-      <ul className="mt-6 border-t border-line">
-        {others.map((project) => (
-          <ProjectRow key={project.slug} project={project} />
-        ))}
+    <Section id="more-work" labelledBy="more-work-title">
+      <SectionHeading id="more-work-title" title="More projects" />
+      <ul className="mt-6 divide-y divide-line border-y border-line">
+        {projects
+          .filter((project) => !project.flagship)
+          .map((project) => (
+            <ProjectRow key={project.slug} project={project} />
+          ))}
       </ul>
     </Section>
   );

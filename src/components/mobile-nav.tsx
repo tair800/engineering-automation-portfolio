@@ -55,8 +55,8 @@ export function MobileNav() {
               </li>
             ))}
             {[
-              { href: profile.linkedinUrl, label: "LinkedIn" },
               { href: profile.githubUrl, label: "GitHub" },
+              { href: profile.linkedinUrl, label: "LinkedIn" },
             ].map((link) => (
               <li key={link.label}>
                 <a

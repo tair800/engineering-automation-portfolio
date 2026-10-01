@@ -9,13 +9,8 @@ export function SiteFooter() {
         <p>
           {profile.name} · {profile.role}
         </p>
-        <p className="flex flex-wrap gap-x-5 gap-y-2">
-          <ExternalLink href={profile.githubUrl} className="hover:text-ink">
-            GitHub
-          </ExternalLink>
-          <ExternalLink href={profile.linkedinUrl} className="hover:text-ink">
-            LinkedIn
-          </ExternalLink>
+        {/* GitHub and LinkedIn are in the header on every page; the footer adds only the source. */}
+        <p>
           <ExternalLink href={repositoryUrl} className="hover:text-ink">
             Source of this site
           </ExternalLink>

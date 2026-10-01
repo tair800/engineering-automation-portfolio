@@ -25,18 +25,13 @@ export const projects: Project[] = [
       "Ingestion with batch quarantine, deterministic matching with per-currency tolerance bands, one classified exception per residual with an evidence pack, a model confined to a closed enum of treatment codes, role-separated human approval, a pure Decimal amount calculator, and a transactional outbox with bounded retry, a dead-letter queue and a recovery path for ambiguous outcomes.",
     hardPart:
       "A send whose outcome nobody knows: the ledger may have committed the posting and the response was lost. The system records it as UNKNOWN, never retries it on the assumption it failed, and follows the adapter's declared capability: a bounded re-send under the same operation id where the ledger enforces the key, reconciliation by query where it can be queried, otherwise an operator.",
-    brief: {
-      problem:
-        "Settlement files never fully match the ledger, and a retry can silently post the same adjustment twice.",
-      built:
-        "Deterministic matching, a model limited to picking a treatment code, human approval, and a transactional outbox with bounded retry.",
-      skills: [
-        "Idempotency",
-        "Transactional outbox",
-        "Deterministic money",
-        "LLM integration",
-        "Evaluation vs baselines",
-      ],
+    plain: {
+      does: "Resolves mismatches between payment records and a company's books, and is designed so a retried request never posts the same correction twice.",
+      matters: "A duplicated or wrong correction quietly distorts reported revenue, and is usually found months later.",
+      built: "Built automatic matching, AI that suggests fixes but never amounts, and a person's approval before anything is posted.",
+      result: "In 21 of 21 failure-test runs no correction was posted twice, while a simpler version double-posted in 5 of 7 scenarios. In one run against a live model, all 177 of its wrong suggestions were refused; the public demo uses a labelled stand-in.",
+      figure: { value: "21 / 21", label: "test runs with no double posting on a simulated ledger; a simpler version double-posted in 5 of 7 scenarios" },
+      tech: ["Python", "FastAPI", "PostgreSQL", "Next.js"],
     },
     evidence: [
       {
@@ -144,6 +139,7 @@ export const projects: Project[] = [
     ],
     limitations: [
       "Every row is synthetic and the ledger is simulated; there is no real ledger integration.",
+      "Nothing runs the stages in sequence as a service: the demo seeder composes them, ingestion is command-line driven, and the retry and reconciliation passes are bounded one-shot passes rather than daemons.",
       "The shipped package makes no live model call: the deployed demo uses a declared stand-in, and the one live measurement ran through a test-only transport on a workstation.",
       "The effectively-once effect is conditional on the ledger adapter's declared and proven capabilities.",
       "Under ENFORCES_KEY the suppression is performed by a simulated ledger written in the repository, so it shows the dispatcher behaving correctly given an enforcing ledger — not that any real ledger enforces anything.",
@@ -229,6 +225,13 @@ export const projects: Project[] = [
       "A 17-node n8n workflow and a typed Python service for the same approach workflow, a harness that forces two scheduler executions to overlap with a barrier rather than a sleep, a fake carrier receiver, and an operator console with a comparison screen. In the kill test the n8n arm runs through a node-by-node simulator of its exported workflow.",
     hardPart:
       "Measuring at the receiver rather than asking either arm what it did, then showing that SELECT … FOR UPDATE SKIP LOCKED — not only the cleared due_at — stops a second claim when two claim transactions overlap before either commits.",
+    plain: {
+      does: "Compares an n8n version and a Python version of an insurance broker's workflow at one job: never sending an insurer the same request twice.",
+      matters: "Approaching the same insurer twice for one risk can cost the placement, and an email that reached an underwriter cannot be recalled.",
+      built: "Built the same broker workflow in n8n and in typed Python, a test harness that makes two runs overlap, and a fake insurer that counts what actually arrives.",
+      result: "When two runs overlapped, the n8n version sent the same approach twice and the Python version once. The n8n workflow was run through a simulator of its exported nodes, not a live n8n server.",
+      tech: ["Python", "n8n", "PostgreSQL", "Next.js"],
+    },
     evidence: [
       {
         value: "2 vs 1",
@@ -388,6 +391,14 @@ export const projects: Project[] = [
       "A pipeline that generates call sites from revision A, keeps only those that compile, lets the TypeScript compiler label what breaks under revision B, and predicts those breakages from the oasdiff change set and a parsed view of the source — never from compiler output.",
     hardPart:
       "Keeping the author out of the answer key: the generator never sees revision B or the diff, a failing call site is discarded rather than repaired, and a guard fails the build if the classifier imports the oracle.",
+    plain: {
+      does: "Predicts which parts of an app will break when an outside service it relies on releases a new version of its API.",
+      matters: "A tool that compares API documents can list hundreds of changes, but not which of them break your own code.",
+      built: "Built a pipeline that writes calls against the old API, lets the compiler mark which break on the new one, and predicts them without seeing its answer.",
+      result: "On the APIs it was developed on it scored 0.963 (F1); on APIs held back until the end, 0.328 — no false alarms, but only about one breakage in five caught. The second number is the honest one.",
+      caveat: "On APIs it had not seen before, it raised no false alarms but caught only about one breakage in five.",
+      tech: ["Python", "TypeScript", "OpenAPI", "Next.js"],
+    },
     evidence: [
       {
         value: "0.963 → 0.328",
@@ -537,12 +548,13 @@ export const projects: Project[] = [
       "An MCP server over Streamable HTTP that checks the audience, computes the effective scope as the intersection down the whole delegation chain, and allows an irreversible tool only against an approval bound to subject, tool, account, amount and expiry — consumed by a conditional UPDATE behind a UNIQUE constraint.",
     hardPart:
       "Proving each control is load-bearing: every one was removed in turn and the suite went red. Later reviews found holes no test covered — an unauthenticated approval endpoint and refusals at the transport that left no audit row — and both were fixed and published.",
-    brief: {
-      problem:
-        "A validly signed agent token can still be meant for another service, over-claim its scope, or request an irreversible action nobody approved.",
-      built:
-        "An MCP resource server that checks audience, intersects scope down the delegation chain, and lets each approval authorise at most one effect.",
-      skills: ["MCP", "AI agent security", "JWT / JWKS", "Approval gating", "Concurrency control"],
+    plain: {
+      does: "Controls which actions an AI agent may perform, and blocks anything irreversible until someone other than the agent has approved it.",
+      matters: "A valid-looking agent credential can still be meant for another service, claim more permission than it was given, or ask for an action nobody approved.",
+      built: "Built a gatekeeper that checks each request against the agent's real permissions and lets every approval be used only once.",
+      result: "None of the 5 attack scenarios got through the hardened server, against 2 of 5 for a basic token check, and each of 12 deliberately planted breaches made the tests fail.",
+      figure: { value: "0 of 5", label: "test attacks got through, where a basic security check let 2 through" },
+      tech: ["Python", "MCP", "FastAPI", "PostgreSQL"],
     },
     evidence: [
       {
@@ -557,7 +569,7 @@ export const projects: Project[] = [
       },
       {
         value: "12 / 12",
-        label: "security controls removed one at a time, every removal caught by the tests — replayed in CI",
+        label: "deliberately planted breaches — in the security checks, the audit trail, the rate limit and the test harness itself — each caught by the tests, replayed in CI",
         tone: "pass",
       },
       {
@@ -747,6 +759,13 @@ export const projects: Project[] = [
       "A resolution layer over fixed legacy schemas that may not change: deterministic blocking, ordered rules that decide MATCH, REVIEW or NO_MATCH, human approval of every merge, and an append-only merge ledger that reverses to the byte — evaluated on registrar duplicate adjudications from the public GLEIF dataset, the only data the corpus and the live demo hold.",
     hardPart:
       "Brownfield constraints: the source schemas may not change, so everything is additive — including an expand, backfill and contract migration that refuses to drop a column while any row would lose its approver.",
+    plain: {
+      does: "Decides whether two company records describe the same business, and leaves every merge for a person to approve.",
+      matters: "Wrongly merging two companies corrupts where payments go, and missing a duplicate leaves the same company on file twice.",
+      built: "Built clear, explainable matching rules over public company-registry data, a person approving every merge, and a merge history that can be undone exactly.",
+      result: "Precision of 0.9980 on 10,532 development pairs — six false merges against seven for the best baseline — though a simple nine-line rule still scores higher overall (F1 0.7607 against 0.7303).",
+      tech: ["Python", "FastAPI", "SQLite", "Docker"],
+    },
     evidence: [
       {
         value: "0.9980",
@@ -866,7 +885,7 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/counterparty-resolver",
     liveUrl: "https://counterparty-resolver.onrender.com",
-    demoNote: "Free-tier demo — after a quiet spell, the first load shows the host's wake-up screen for up to about a minute.",
+    demoNote: "Free demo — may take ~1 min to wake.",
   },
   {
     slug: "bordereaux-reconciler",
@@ -887,12 +906,13 @@ export const projects: Project[] = [
       "Ingestion under conventions the coverholder declares, column mapping from the header and the shape of the values beneath it, canonicalisation to exact decimals with the source cell attached to every value, reconciliation into six statuses, a human-confirmation step for mappings, and Terraform for Azure that passes terraform validate in CI and has never been applied.",
     hardPart:
       "Mapping headers nobody wrote down. Each column is profiled — share of amounts, dates, identifiers, closed vocabularies, magnitude rank among the money columns — and that evidence is combined with the header, so the mapping holds where header-string methods collapse.",
-    brief: {
-      problem:
-        "Coverholders send bordereaux with no standard headers or number formats, and the reconciliation errors that matter do not look wrong.",
-      built:
-        "Column mapping from headers and value shapes, exact decimal money with the source cell on every value, and six reconciliation statuses.",
-      skills: ["Insurance reconciliation", "Deterministic money", "Data lineage", "Human-confirmed mapping"],
+    plain: {
+      does: "Checks the monthly spreadsheets insurance partners send against the insurer's ledger, traces every figure to its source cell, and flags unclear rows for review.",
+      matters: "Partners use different column names and number formats, and the errors that matter most do not look wrong.",
+      built: "Built an engine that works out each spreadsheet's layout on its own, keeps money exact, and gives every row a clear outcome.",
+      result: "Not one row was wrongly marked as matching in a held-back test set of 715 rows with 90 planted errors, and every row got exactly the status the answer key expected.",
+      figure: { value: "0", label: "false matches in a separate 715-row test set with 90 planted errors — every row got the right result" },
+      tech: ["Python", "FastAPI", "PostgreSQL", "Docker"],
     },
     evidence: [
       {
@@ -1045,7 +1065,7 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/bordereaux-reconciler",
     liveUrl: "https://bordereaux-reconciler.onrender.com",
-    demoNote: "Free-tier demo — after a quiet spell, the first load shows the host's wake-up screen for up to about a minute.",
+    demoNote: "Free demo — may take ~1 min to wake.",
   },
   {
     slug: "parts-answer-gate",
@@ -1070,6 +1090,14 @@ export const projects: Project[] = [
       "Hybrid BM25 and pgvector retrieval with variant, serial, validity and knowledge-time predicates in the SQL WHERE clause of both ranking queries; a gate of seven deterministic signals that answers, abstains or sends to review; extractive answers with verbatim citations at character offsets; in English, Turkish and Russian.",
     hardPart:
       "Bitemporality. For example, a correction issued in 2025 about a 2021 procedure is valid in 2021 and known from 2025. Asked what the technician had in front of them at the time, the system returns the belief a later correction replaced — without rewriting it.",
+    plain: {
+      does: "Answers technicians' questions from maintenance manuals, quoting the exact passage that applies to their machine on a given date.",
+      matters: "An answer taken from an outdated manual or the wrong machine variant can look confident, cite a real document and still be wrong.",
+      built: "Built search that filters by machine, serial number and date before ranking, a gate that can refuse to answer, and word-for-word answers with citations.",
+      result: "It never returned an outdated or wrong-variant passage in 600 replayed queries (120 questions, each at 5 dates), but 4 of its 12 release criteria, fixed in advance, failed — a fifth passed only trivially — so it is published as a negative result.",
+      caveat: "It failed 4 of the 12 release tests set in advance, so it was closed rather than presented as a success.",
+      tech: ["Python", "PostgreSQL", "pgvector", "FastAPI"],
+    },
     evidence: [
       {
         value: "4 of 12",
@@ -1246,7 +1274,7 @@ export const projects: Project[] = [
     ],
     githubUrl: "https://github.com/tair800/parts-answer-gate",
     liveUrl: "https://parts-answer-gate.onrender.com",
-    demoNote: "Free-tier demo — after a quiet spell, the first load shows the host's wake-up screen for up to about a minute.",
+    demoNote: "Free demo — may take ~1 min to wake.",
   },
 ];
 

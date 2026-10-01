@@ -11,12 +11,14 @@ const textLink = "inline-flex h-8 items-center gap-1 text-[13px] text-muted tran
 export function ProofLinks({
   project,
   caseStudy = true,
+  github = true,
   backend = true,
   note = true,
   compact = false,
 }: {
   project: Project;
   caseStudy?: boolean;
+  github?: boolean;
   /** Include the project's backend link (API docs, MCP metadata); the home page leaves it to the case study. */
   backend?: boolean;
   /** Show the project's cold-start note under the links, where it has one. */
@@ -53,12 +55,14 @@ export function ProofLinks({
             <span className="sr-only">(opens in a new tab)</span>
           </a>
         </li>
-        <li>
-          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={other}>
-            GitHub <ArrowUpRight className="size-3.5 text-faint" />
-            <span className="sr-only">(opens in a new tab)</span>
-          </a>
-        </li>
+        {github ? (
+          <li>
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className={other}>
+              GitHub <ArrowUpRight className="size-3.5 text-faint" />
+              <span className="sr-only">(opens in a new tab)</span>
+            </a>
+          </li>
+        ) : null}
         {backend && project.backendUrl ? (
           <li>
             <a href={project.backendUrl} target="_blank" rel="noopener noreferrer" className={other}>

@@ -35,14 +35,24 @@ export interface Metric {
 }
 
 /**
- * A flagship's card on the home page: one line each, and the skills a reader should see first.
- * The case study uses the long forms.
+ * The project in plain English, for a reader who is not an engineer: the home page and the
+ * summary at the top of the case study. The technical forms stay in the rest of the record.
  */
-export interface Brief {
-  problem: string;
+export interface Plain {
+  /** What it does, in one sentence: the home page's description. */
+  does: string;
+  /** Why it matters, in one sentence. */
+  matters: string;
+  /** What was built, in one sentence starting "Built". */
   built: string;
-  /** At most five, each also listed in the project's `skills`. */
-  skills: string[];
+  /** The key result in words, for the case-study summary. */
+  result: string;
+  /** Flagships only: the lead figure as the home page shows it, with a label anyone can read. */
+  figure?: { value: string; label: string };
+  /** A caveat that must travel with the home page's description — a negative result, for one. */
+  caveat?: string;
+  /** At most four technologies, each from the project's stack. */
+  tech: string[];
 }
 
 export type StepKind =
@@ -207,8 +217,7 @@ export interface Project {
   problem: string;
   built: string;
   hardPart: string;
-  /** Flagships only: the home page's card copy. */
-  brief?: Brief;
+  plain: Plain;
   evidence: Metric[];
   visual: EvidenceVisual;
   flow: Flow;

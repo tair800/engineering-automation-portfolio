@@ -42,7 +42,7 @@ export const viewport: Viewport = {
 };
 
 /* Runs before first paint: an explicit choice wins, otherwise the system preference. */
-const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)}catch(e){}})()`;
+const themeScript = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.setAttribute("data-theme",t)}catch(e){/* localStorage unavailable: fall back to the system preference so data-theme is always set */document.documentElement.setAttribute("data-theme",matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")}})()`;
 
 const personJsonLd = {
   "@context": "https://schema.org",

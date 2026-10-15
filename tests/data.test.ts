@@ -11,6 +11,8 @@ import { describe, expect, it } from "vitest";
 import { profile } from "@/data/profile";
 import { getProject, leadMetric, projects } from "@/data/projects";
 import { coreTechnologies } from "@/data/skills";
+import * as homeOg from "@/app/opengraph-image";
+import * as projectOg from "@/app/projects/[slug]/opengraph-image";
 
 const slugs = projects.map((p) => p.slug);
 
@@ -153,6 +155,21 @@ describe("screenshots", () => {
     expect(existsSync(file)).toBe(true);
     const meta = await sharp(file).metadata();
     expect([meta.width, meta.height]).toEqual([width, height]);
+  });
+});
+
+describe("social cards", () => {
+  it.each([
+    ["home", homeOg],
+    ["project", projectOg],
+  ])("%s card describes itself for assistive tech and link previews", (_name, og) => {
+    expect(typeof og.alt).toBe("string");
+    expect(og.alt.trim().length).toBeGreaterThan(0);
+    expect(og.contentType).toBe("image/png");
+    expect(typeof og.size.width).toBe("number");
+    expect(typeof og.size.height).toBe("number");
+    expect(og.size.width).toBeGreaterThan(0);
+    expect(og.size.height).toBeGreaterThan(0);
   });
 });
 

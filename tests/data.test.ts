@@ -13,6 +13,8 @@ import { getProject, leadMetric, projects } from "@/data/projects";
 import { coreTechnologies } from "@/data/skills";
 import * as homeOg from "@/app/opengraph-image";
 import * as projectOg from "@/app/projects/[slug]/opengraph-image";
+import sitemap from "@/app/sitemap";
+import { siteUrl } from "@/lib/site";
 
 const slugs = projects.map((p) => p.slug);
 
@@ -170,6 +172,20 @@ describe("social cards", () => {
     expect(typeof og.size.height).toBe("number");
     expect(og.size.width).toBeGreaterThan(0);
     expect(og.size.height).toBeGreaterThan(0);
+  });
+});
+
+describe("sitemap", () => {
+  it("lists the site root and one URL per published project", () => {
+    const entries = sitemap();
+    expect(entries.map((entry) => entry.url)).toEqual([
+      siteUrl,
+      ...projects.map((p) => `${siteUrl}/projects/${p.slug}`),
+    ]);
+    expect(entries.map((entry) => entry.priority)).toEqual([
+      1,
+      ...projects.map((p) => (p.flagship ? 0.9 : 0.8)),
+    ]);
   });
 });
 

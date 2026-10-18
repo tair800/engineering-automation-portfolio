@@ -187,6 +187,17 @@ describe("sitemap", () => {
       ...projects.map((p) => (p.flagship ? 0.9 : 0.8)),
     ]);
   });
+
+  it("gives each project exactly one entry at its canonical URL, refreshed monthly", () => {
+    const entries = sitemap();
+    expect(entries).toHaveLength(projects.length + 1);
+    for (const p of projects) {
+      const matches = entries.filter((entry) => entry.url.endsWith(`/projects/${p.slug}`));
+      expect(matches, p.slug).toHaveLength(1);
+      expect(matches[0].url, p.slug).toBe(`${siteUrl}/projects/${p.slug}`);
+    }
+    for (const entry of entries) expect(entry.changeFrequency, entry.url).toBe("monthly");
+  });
 });
 
 describe("core technologies", () => {

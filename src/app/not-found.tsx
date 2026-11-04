@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "@/components/icons";
+
+// Without these, the page inherits the home page's title and the layout's `index, follow`.
+export const metadata: Metadata = {
+  title: "Page not found",
+  robots: { index: false },
+};
 
 export default function NotFound() {
   return (
